@@ -8,8 +8,7 @@ SRC  = main.cu
 PRECISION = 64
 #DEBUG = -G -g
 DEBUG = 
-LIB_PATH = /usr/local/cuda-5.5/lib64	# modify here for the path to your cuda library
-#LIB_PATH = /usr/local/cuda-6.0/lib64
+LIB_PATH = $(LD_LIBRARY_PATH)
 OPT = -rdc=true -m64 -arch sm_30 -L$(LIB_PATH) -lcuda -lcudart -dc -lm
 
 all: $(EXEC)
