@@ -1,56 +1,43 @@
 &comp
-    nx = 17;  ny = 17;  nz = 17   ! mesh resolution
-!    nx = 33;  ny = 33;  nz = 33   ! mesh resolution
-!    nx = 65;  ny = 65;  nz = 65   ! mesh resolution
-!    nx = 129;  ny = 129;  nz = 129   ! mesh resolution
+    nx = 65;  ny = 65;  nz = 65   ! inner mesh points of the domain
 /
 
 &start
     Lx = 8;     Ly = 8;     Lz = 20     ! size of the box
     Ox = -4;    Oy = -4;    Oz = -10    ! origin
-    rxhalf = 2; ryhalf = 2;             ! distance for half the grid points
-    bInit = "Pontin09"
-!    bInit = "analytic"
-    ampl = 1.                   ! amplitude of the magnetic field
-!    phi1 = 3.141592653589793    ! first twisting angle
-!    phi2 = -3.141592653589793   ! second twisting angle
+    bInit = "analytic"           ! initial magnetic field
+    ampl = 1.                    ! amplitude of the magnetic field
     phi1 = 1.5707963267948966    ! first twisting angle
     phi2 = -1.5707963267948966   ! second twisting angle
-    fRestart = t
+    fRestart = f    ! flag, 't' for restarting simulation, 'f' for creating new initial state
 /
 
 &run
-    nCycle = 1
-    dt0 = 3e-4
-    dtMin = 1e-8
-    maxError = 5e-6
-    zUpdate = True
-    zPeri = False
+    nCycle = 1000       ! total number of time steps
+    dt0 = 3e-4          ! initial time step
+    dtMin = 1e-8        ! minimum time interval under which simulations stops
+    maxError = 5e-6     ! maximum allowed error for the time step
+    zPeri = False       ! flag for periodic boundaries in z direction
 
-    epsilonProf = False
-!    epsilonProf = True
-!    jMethod = "Stokes"
-    jMethod = "Stokes4th"
+    jMethod = "Stokes"  ! method for computing J
 !    jMethod = "Classic"
 /
 
 &io
-    nTs = 1
-    dtDump = 1
-    dtSave = .2
+    nTs = 1     ! cadence for diagnostic output
+    dtDump = 1  ! time interval for state dumping
+    dtSave = .2 ! time interval for state saving (in case of a crash)
 
-    dumpJ          = True
-    dumpDetJac     = True
-    dumpCellVol    = True
-    dumpConvexity  = True
-    dumpWedgeMin   = True
+    dumpJ          = True       ! flag set to 1 dumps JJ
+    dumpDetJac     = True       ! flag set to 1 dumps detJac
+    dumpCellVol    = True       ! flag set to 1 dumps cellVol
+    dumpConvexity  = True       ! flag set to 1 dumps convexity
+    dumpWedgeMin   = True       ! flag set to 1 dumps the minimum of the wedge product
 
-    redJxB_B2Max   = True
-    redEpsilonStar = True
-!    redErrB_1ez    = True
-!    redErrXb_XbAn  = True
-    redB2          = True
-    redConvex      = True
-    redWedgeMin    = True
+    redJxB_B2Max   = True       ! flag for computing JxB_B2Max
+    redEpsilonStar = True       ! force free parameter espilon* (eq, 19, Pontin, Hornig 2009)
+    redB2          = True       ! flag for computing B2, the total magnetic energy
+    redConvex      = True       ! monitors the convexity of the system (1 = convex, 0 = concave)
+    redWedgeMin    = True       ! monitors the minimum of the 8 wedge products
 /
 
