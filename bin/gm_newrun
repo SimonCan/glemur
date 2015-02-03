@@ -1,0 +1,22 @@
+#!/bin/bash
+#
+# Creates a new run directory with the current parameter file and source links.
+
+if [ $# -eq 0 ]; then
+  echo "error: no directory specified"
+  exit 1
+fi
+
+if [ -d "../$1" ]; then
+  echo "error: run directory already exists"
+  exit 1
+fi
+
+echo "mkdir ../$1"
+mkdir "../$1"
+echo "cp -R --preserve=links params.in src glemur ../$1"
+cp -R --preserve=links params.in src glemur "../$1"
+echo "mkdir ../$1/data"
+mkdir "../$1/data"
+
+exit 0

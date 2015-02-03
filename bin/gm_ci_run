@@ -1,0 +1,22 @@
+#!/bin/bash
+#
+# Add the run into the git repository.
+# Includes parameter files and reduced output.
+
+if [ $# -gt 0 ]; then
+  dir=$1
+  len=${#dir}
+  last=${dir:len-1}
+  if [ $last == "/" ]; then
+    dir=${dir:0:len-1}
+  fi
+  run=$dir
+else
+  dir="."
+  run=${PWD##*/}
+fi
+
+git add "$dir/params.in" "$dir/cuda.info" "$dir/data/time_series.dat"
+git commit -m "run directory $dir" "$dir/params.in" "$dir/cuda.info" "$dir/data/time_series.dat"
+
+exit 0

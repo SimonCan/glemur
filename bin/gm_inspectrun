@@ -1,0 +1,13 @@
+#!/bin/bash
+#
+# Prints the last lines of the time_series.dat file..
+
+if [ $# -eq 0 ]; then
+  file=data/time_series.dat
+else
+  file="$1/data/time_series.dat"
+fi
+
+head $file -n 1 && tail $file -n 10 | grep -v "#"
+
+exit 0
