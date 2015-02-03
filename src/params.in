@@ -1,0 +1,56 @@
+&comp
+    nx = 17;  ny = 17;  nz = 17   ! mesh resolution
+!    nx = 33;  ny = 33;  nz = 33   ! mesh resolution
+!    nx = 65;  ny = 65;  nz = 65   ! mesh resolution
+!    nx = 129;  ny = 129;  nz = 129   ! mesh resolution
+/
+
+&start
+    Lx = 8;     Ly = 8;     Lz = 20     ! size of the box
+    Ox = -4;    Oy = -4;    Oz = -10    ! origin
+    rxhalf = 2; ryhalf = 2;             ! distance for half the grid points
+    bInit = "Pontin09"
+!    bInit = "analytic"
+    ampl = 1.                   ! amplitude of the magnetic field
+!    phi1 = 3.141592653589793    ! first twisting angle
+!    phi2 = -3.141592653589793   ! second twisting angle
+    phi1 = 1.5707963267948966    ! first twisting angle
+    phi2 = -1.5707963267948966   ! second twisting angle
+    fRestart = t
+/
+
+&run
+    nCycle = 1
+    dt0 = 3e-4
+    dtMin = 1e-8
+    maxError = 5e-6
+    zUpdate = True
+    zPeri = False
+
+    epsilonProf = False
+!    epsilonProf = True
+!    jMethod = "Stokes"
+    jMethod = "Stokes4th"
+!    jMethod = "Classic"
+/
+
+&io
+    nTs = 1
+    dtDump = 1
+    dtSave = .2
+
+    dumpJ          = True
+    dumpDetJac     = True
+    dumpCellVol    = True
+    dumpConvexity  = True
+    dumpWedgeMin   = True
+
+    redJxB_B2Max   = True
+    redEpsilonStar = True
+!    redErrB_1ez    = True
+!    redErrXb_XbAn  = True
+    redB2          = True
+    redConvex      = True
+    redWedgeMin    = True
+/
+
