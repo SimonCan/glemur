@@ -8,7 +8,7 @@ SRC  = main.cu
 PRECISION = 64
 #DEBUG = -G -g
 DEBUG = 
-LIB_PATH = $(LD_LIBRARY_PATH)
+LIB_PATH = $(DYLD_LIBRARY)
 OPT = -rdc=true -m64 -arch sm_30 -L$(LIB_PATH) -lcuda -lcudart -dc -lm
 
 all: $(EXEC)
