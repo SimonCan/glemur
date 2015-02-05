@@ -22,6 +22,10 @@ int initState(struct varsHost_t h, struct parameters_t p, struct red_t *red)
     	initBlobsDomes(h, p);
     if (strncmp(p.bInit, "blobsDomesK035 ", 15) == 0)
     	initBlobsDomesK035(h, p);
+    if (strncmp(p.bInit, "blobsDomesK05 ", 14) == 0)
+    	initBlobsDomesK05(h, p);
+    if (strncmp(p.bInit, "blobsDomesK ", 12) == 0)
+    	initBlobsDomesK(h, p);
     if (strncmp(p.bInit, "blobsDomeSingle ", 16) == 0)
     	initBlobsDomeSingle(h, p);
 
