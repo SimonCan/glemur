@@ -18,16 +18,10 @@ int initState(struct varsHost_t h, struct parameters_t p, struct red_t *red)
     // magnetic field B0
     //
 
-    if (strncmp(p.bInit, "blobsDomes ", 11) == 0)
-    	initBlobsDomes(h, p);
-    if (strncmp(p.bInit, "blobsDomesK035 ", 15) == 0)
-    	initBlobsDomesK035(h, p);
-    if (strncmp(p.bInit, "blobsDomesK05 ", 14) == 0)
-    	initBlobsDomesK05(h, p);
-    if (strncmp(p.bInit, "blobsDomesK ", 12) == 0)
-    	initBlobsDomesK(h, p);
-    if (strncmp(p.bInit, "blobsDomeSingle ", 16) == 0)
-    	initBlobsDomeSingle(h, p);
+    if (strncmp(p.bInit, "blobsDome ", 10) == 0)
+    	initBlobsDome(h, p);
+    if (strncmp(p.bInit, "blobsDomes2 ", 12) == 0)
+    	initBlobsDomes2(h, p);
 
     // include the boundaries
     for (k = 0; k < p.nz+2; k++) {
