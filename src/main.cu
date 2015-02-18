@@ -73,12 +73,6 @@ int main(int argc, char* argv[])
         return -1;
     }
     printf("CUDA device count = %i\n", deviceCount);
-    err = writeCudaInfo(deviceCount); // write CUDA device info into file
-    if (err != 0) {
-        printf("error: could not write device properties into 'gpu.info'\n");
-        return -1;
-    }
-
     activeDevice = 0;
     // parse the command line parameters
     while ((c = getopt(argc, argv, "d:")) != -1) {
@@ -99,6 +93,12 @@ int main(int argc, char* argv[])
     }
     cudaSetDevice(activeDevice);
     printf("Running on device %li\n", activeDevice);
+
+    err = writeCudaInfo(deviceCount, activeDevice); // write CUDA device info into file
+    if (err != 0) {
+        printf("error: could not write device properties into 'gpu.info'\n");
+        return -1;
+    }
 
     // determine the endianness on this machine
     if (pEndian[0] == 1) {

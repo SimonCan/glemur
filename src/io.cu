@@ -7,7 +7,7 @@
 #include "io.h"
 
 // store the information about the CUDA devices in 'cuda.info'
-int writeCudaInfo(int deviceCount)
+int writeCudaInfo(int deviceCount, long int activeDevice)
 {
     FILE                    *fd;
     struct cudaDeviceProp   devProp;  // cuda device properties
@@ -21,6 +21,7 @@ int writeCudaInfo(int deviceCount)
     }
 
     fprintf(fd, "number of CUDA devices: %i\n\n", deviceCount);
+    fprintf(fd, "active device: %li\n\n", activeDevice);
 
     for(dev = 0; dev < deviceCount; dev++) {
         errCuda = cudaGetDeviceProperties(&devProp, dev);

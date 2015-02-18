@@ -4,7 +4,7 @@
 #define IO_H_
 
 // store the information about the CUDA devices in 'cuda.info'
-int writeCudaInfo(int deviceCount);
+int writeCudaInfo(int deviceCount, long int activeDevice);
 
 // swap byte order for the correct endianness
 REAL floatSwap(REAL value);
