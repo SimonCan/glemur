@@ -196,22 +196,21 @@ class intStream:
                     JB = JB/4
                     lam[i,j] = lam[i,j]/l
                     
-                    dLamTmp = (lamTmp[1:] - lamTmp[:-1]) / (ll[1:] - ll[:-1])
+                    dLamTmp = abs((lamTmp[1:] - lamTmp[:-1]) / (ll[1:] - ll[:-1]))
                     dLamTmp[np.isnan(dLamTmp)] = 0
                     lamS[i,j] = np.max(dLamTmp)
                     
                     epsilon[i,j] = epsilon[i,j]/l
                     epsilonTmp = (epsilonTmp[1:] - epsilonTmp[:-1]) / (ll[1:] - ll[:-1])
                     epsilonTmp[np.isnan(epsilonTmp)] = 0
-                    epsilonS[i,j] = np.max(epsilonTmp)
+                    epsilonS[i,j] = np.max(abs(epsilonTmp))
                     
                     twist[i,j] = twist[i,j]/l
                     if (ll.shape[0] > 1):
                         idx = np.where(dLamTmp == lamS[i,j])[0][0]
-                        #print idx, mu.shape, lamS.shape, ll.shape, lamTmp.shape
                         mu[i,j] = lamS[i,j]*2*(ll[idx+1] - ll[idx])/(lamTmp[idx+1] + lamTmp[idx])
                     else:
-                        mu[i,j] = lamS[i,j]*2*ll[idx]/lamTmp[idx]
+                        mu[i,j] = lamS[i,j]*2*ll[0]/lamTmp[0]
                         
                     arrays['JB'].SetValue(i+j*len(s.x0), JB[i,j])
                     arrays['lam'].SetValue(i+j*len(s.x0), lam[i,j])
