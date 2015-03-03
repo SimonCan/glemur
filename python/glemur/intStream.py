@@ -29,7 +29,7 @@ class intStream:
         
          *intQ*:
            Quantity to be integrated along the streamlines.
-           Options: 'Jp', 'JB', 'lam', 'lamS', 'deltaLam', 'epsilon', 'epsilonS', 'l', 'twist'
+           Options: 'Jp', 'JB', 'lam', 'lamS', 'deltaLam', 'epsilon', 'epsilonS', 'l', 'twist', 'mu'
            
          *dataDir*:
             Data directory.
@@ -93,11 +93,11 @@ class intStream:
         intQ = np.array(intQ)
             
         # check if we need to J
-        needJ = np.any(np.array(['Jp', 'JB', 'lam', 'lamS', 'deltaLam', 'epsilon', 'epsilonS', 'twist']) == intQ.reshape((intQ.shape[0],1)))        
+        needJ = np.any(np.array(['Jp', 'JB', 'lam', 'lamS', 'deltaLam', 'epsilon', 'epsilonS', 'twist', 'mu']) == intQ.reshape((intQ.shape[0],1)))        
         # check if we need B
-        needB = np.any(np.array(['JB', 'lam', 'lamS', 'deltaLam', 'epsilon', 'epsilonS', 'twist']) == intQ.reshape((intQ.shape[0],1)))
+        needB = np.any(np.array(['JB', 'lam', 'lamS', 'deltaLam', 'epsilon', 'epsilonS', 'twist', 'mu']) == intQ.reshape((intQ.shape[0],1)))
         # check if we need the length dl
-        needDl = np.any(np.array(['JB', 'lam', 'lamS', 'deltaLam', 'epsilon', 'epsilonS', 'l', 'twist']) == intQ.reshape((intQ.shape[0],1)))
+        needDl = np.any(np.array(['JB', 'lam', 'lamS', 'deltaLam', 'epsilon', 'epsilonS', 'l', 'twist', 'mu']) == intQ.reshape((intQ.shape[0],1)))
         
         # check if the data has the necessarry attributes
         if (needJ and not(hasattr(data, 'jfield'))):
@@ -110,11 +110,11 @@ class intStream:
         # add integrated quantities to intQ (because we can)
         addQ = set([])
         if needJ:
-            addQ = addQ.union(set(['Jp', 'JB', 'lam', 'lamS', 'deltaLam', 'epsilon', 'epsilonS', 'twist']))
+            addQ = addQ.union(set(['Jp', 'JB', 'lam', 'lamS', 'deltaLam', 'epsilon', 'epsilonS', 'twist', 'mu']))
         if needB:
-            addQ = addQ.union(set(['JB', 'lam', 'lamS', 'deltaLam', 'epsilon', 'epsilonS', 'twist']))
+            addQ = addQ.union(set(['JB', 'lam', 'lamS', 'deltaLam', 'epsilon', 'epsilonS', 'twist', 'mu']))
         if needDl:
-            addQ = addQ.union(set(['JB', 'lam', 'lamS', 'deltaLam', 'epsilon', 'epsilonS', 'l', 'twist']))
+            addQ = addQ.union(set(['JB', 'lam', 'lamS', 'deltaLam', 'epsilon', 'epsilonS', 'l', 'twist', 'mu']))
         intQ = np.array(list(addQ))
         
         # create arrays for the vtk i/o
@@ -138,6 +138,7 @@ class intStream:
             epsilon = np.zeros(s.tracers.shape[1:3])
             epsilonS = np.zeros(s.tracers.shape[1:3])
             twist = np.zeros(s.tracers.shape[1:3])
+            mu = np.zeros(s.tracers.shape[1:3])
             Jn = np.zeros(3)    # normalized current
         if needDl:
             l2d = np.zeros(s.tracers.shape[1:3])
@@ -149,11 +150,14 @@ class intStream:
                     JJ1 = gm.vecInt(s0.tracers[:,i,j,0], data.jfield, p, interpolation = interpolation)
                 if needB:
                     BB1 = gm.vecInt(s0.tracers[:,i,j,0], data.bfield, p, interpolation = interpolation)
-                    lamTmp = np.zeros(s.sl[i,j]-1)
-                    epsilonTmp = np.zeros(s.sl[i,j]-1)
+                    lamTmp = np.zeros(s.sl[i,j])
+                    lamTmp[0] = np.dot(JJ1, BB1)/np.dot(BB1, BB1)
+                    epsilonTmp = np.zeros(s.sl[i,j])
+                    epsilonTmp[0] = np.linalg.norm(np.cross(JJ1, BB1))/np.dot(BB1, BB1)
                 if needDl:
                     l = 0
-                    ll = np.zeros(s.sl[i,j]-1)
+                    ll = np.zeros(s.sl[i,j])
+                    ll[0] = l
                 for k in range(1, s.sl[i,j]):
                     xx2 = s.tracers[:,i,j,k]
                     if needJ:
@@ -163,17 +167,19 @@ class intStream:
                     if needDl:
                         dl = np.linalg.norm(xx2-xx1)
                         l += dl
-                        ll[k-1] = l - dl/2
+                        ll[k-1] = l
                     # integrate the quantities
                     if needJ:
                         Jp[i,j] += np.dot((JJ2+JJ1), (xx2-xx1)) # division by 2 done later
                     if (needJ and needB):
                         JB[i,j] += np.dot((JJ2+JJ1), (BB2+BB1))*dl   # division by 4 done later
-                        lamTmp[k-1] = np.dot((JJ2+JJ1), (BB2+BB1))/np.dot((BB2+BB1), (BB2+BB1))
-                        lam[i,j] += lamTmp[k-1]*dl
+                        #lamTmp[k-1] = np.dot((JJ2+JJ1), (BB2+BB1))/np.dot((BB2+BB1), (BB2+BB1))
+                        lamTmp[k] = np.dot(JJ2, BB2)/np.dot(BB2, BB2)
+                        lam[i,j] += (lamTmp[k]+lamTmp[k-1])*dl/2
                         deltaLam[i,j] += (np.dot(JJ2,BB2)/np.dot(BB2,BB2) - np.dot(JJ1,BB1)/np.dot(BB1,BB1))/dl
-                        epsilonTmp[k-1] = np.linalg.norm(np.cross((JJ2+JJ1), (BB2+BB1)))/np.dot((BB2+BB1), (BB2+BB1))
-                        epsilon[i,j] += epsilonTmp[k-1]*dl
+                        #epsilonTmp[k-1] = np.linalg.norm(np.cross((JJ2+JJ1), (BB2+BB1)))/np.dot((BB2+BB1), (BB2+BB1))
+                        epsilonTmp[k] = np.linalg.norm(np.cross(JJ2, BB2))/np.dot(BB2, BB2)
+                        epsilon[i,j] += epsilonTmp[k]*dl
                         #twist[i,j] += np.dot((JJ2+JJ1), (BB2+BB1))/(np.linalg.norm(JJ2+JJ1)*np.linalg.norm(BB2+BB1))*dl
                         # take the norm such that for small vectors errors are small
                         Jtmp = (JJ2+JJ1)
@@ -189,16 +195,24 @@ class intStream:
                 if (needJ and needB):
                     JB = JB/4
                     lam[i,j] = lam[i,j]/l
-                    # find lamS from lamTmp
-                    lamTmp = (lamTmp - lamTmp.reshape((len(lamTmp),1)))/(ll - ll.reshape((len(ll),1)))
-                    lamTmp[np.isnan(lamTmp)] = 0
-                    lamS[i,j] = np.max(lamTmp)
+                    
+                    dLamTmp = (lamTmp[1:] - lamTmp[:-1]) / (ll[1:] - ll[:-1])
+                    dLamTmp[np.isnan(dLamTmp)] = 0
+                    lamS[i,j] = np.max(dLamTmp)
+                    
                     epsilon[i,j] = epsilon[i,j]/l
-                    # find lamS from lamTmp
-                    epsilonTmp = (epsilonTmp - epsilonTmp.reshape((len(epsilonTmp),1)))/(ll - ll.reshape((len(ll),1)))
+                    epsilonTmp = (epsilonTmp[1:] - epsilonTmp[:-1]) / (ll[1:] - ll[:-1])
                     epsilonTmp[np.isnan(epsilonTmp)] = 0
                     epsilonS[i,j] = np.max(epsilonTmp)
+                    
                     twist[i,j] = twist[i,j]/l
+                    if (ll.shape[0] > 1):
+                        idx = np.where(dLamTmp == lamS[i,j])[0][0]
+                        #print idx, mu.shape, lamS.shape, ll.shape, lamTmp.shape
+                        mu[i,j] = lamS[i,j]*2*(ll[idx+1] - ll[idx])/(lamTmp[idx+1] + lamTmp[idx])
+                    else:
+                        mu[i,j] = lamS[i,j]*2*ll[idx]/lamTmp[idx]
+                        
                     arrays['JB'].SetValue(i+j*len(s.x0), JB[i,j])
                     arrays['lam'].SetValue(i+j*len(s.x0), lam[i,j])
                     arrays['lamS'].SetValue(i+j*len(s.x0), lamS[i,j])
@@ -206,6 +220,7 @@ class intStream:
                     arrays['epsilon'].SetValue(i+j*len(s.x0), epsilon[i,j])
                     arrays['epsilonS'].SetValue(i+j*len(s.x0), epsilonS[i,j])
                     arrays['twist'].SetValue(i+j*len(s.x0), twist[i,j])
+                    arrays['mu'].SetValue(i+j*len(s.x0), mu[i,j])
                 if needDl:
                     l2d[i,j] = l
                     arrays['l'].SetValue(i+j*len(s.x0), l2d[i,j])
@@ -219,6 +234,7 @@ class intStream:
             self.epsilon = epsilon
             self.epsilonS = epsilonS
             self.twist = twist
+            self.mu = mu
         if needDl:
             self.l = l2d
         # add results to the vtk array
