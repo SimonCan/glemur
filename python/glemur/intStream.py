@@ -138,6 +138,7 @@ class intStream:
             epsilon = np.zeros(s.tracers.shape[1:3])
             epsilonS = np.zeros(s.tracers.shape[1:3])
             twist = np.zeros(s.tracers.shape[1:3])
+            Jn = np.zeros(3)    # normalized current
         if needDl:
             l2d = np.zeros(s.tracers.shape[1:3])
             
@@ -173,7 +174,14 @@ class intStream:
                         deltaLam[i,j] += (np.dot(JJ2,BB2)/np.dot(BB2,BB2) - np.dot(JJ1,BB1)/np.dot(BB1,BB1))/dl
                         epsilonTmp[k-1] = np.linalg.norm(np.cross((JJ2+JJ1), (BB2+BB1)))/np.dot((BB2+BB1), (BB2+BB1))
                         epsilon[i,j] += epsilonTmp[k-1]*dl
-                        twist[i,j] += np.dot((JJ2+JJ1), (BB2+BB1))/(np.linalg.norm(JJ2+JJ1)*np.linalg.norm(BB2+BB1))*dl
+                        #twist[i,j] += np.dot((JJ2+JJ1), (BB2+BB1))/(np.linalg.norm(JJ2+JJ1)*np.linalg.norm(BB2+BB1))*dl
+                        # take the norm such that for small vectors errors are small
+                        Jtmp = (JJ2+JJ1)
+                        Jn[0] = np.sign(Jtmp[0])/np.sqrt(1 + (Jtmp[1]/Jtmp[0])**2 + (Jtmp[2]/Jtmp[0])**2)
+                        Jn[1] = np.sign(Jtmp[1])/np.sqrt(1 + (Jtmp[2]/Jtmp[1])**2 + (Jtmp[0]/Jtmp[1])**2)
+                        Jn[2] = np.sign(Jtmp[2])/np.sqrt(1 + (Jtmp[0]/Jtmp[2])**2 + (Jtmp[1]/Jtmp[2])**2)
+                        Jn = Jn/np.linalg.norm(Jn)
+                        twist[i,j] += np.dot(Jn, (BB2+BB1))/np.linalg.norm(BB2+BB1)*dl
                     xx1 = xx2; JJ1 = JJ2; BB1 = BB2
                 if needJ:
                     Jp[i,j] = Jp[i,j]/2
