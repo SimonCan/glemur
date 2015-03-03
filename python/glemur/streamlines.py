@@ -10,6 +10,7 @@ from vtk.util import numpy_support as VN
 from os import listdir
 import natsort
 
+
 class streamInit:
     """
     streamInit -- Holds the initial streamlines.
@@ -75,7 +76,6 @@ class streamInit:
         """
         
         data   = gm.readB0(dataDir = dataDir, fileName = B0File)
-        #B0     = np.swapaxes(data.bfield, 1, 3)
         B0     = data.bfield
         p      = gm.readParams(dataDir = dataDir, fileName = paramFile)
         self.p = p
@@ -91,10 +91,8 @@ class streamInit:
         
         # create initial seeds
         if (x0 == []):
-            #x0 = np.arange(p.Ox-p.dx, p.Ox+p.Lx+p.dx, p.dx/sub, dtype = 'float32')
             x0 = np.float32(np.linspace(p.Ox-p.dx, p.Ox+p.Lx+p.dx, np.round(1+(2*p.dx+p.Lx)/p.dx*sub)))
         if (y0 == []):
-            #y0 = np.arange(p.Oy-p.dy, p.Oy+p.Ly+p.dy, p.dy/sub, dtype = 'float32')
             y0 = np.float32(np.linspace(p.Oy-p.dy, p.Oy+p.Ly+p.dy, np.round(1+(2*p.dy+p.Ly)/p.dy*sub)))
         self.x0 = x0
         self.y0 = y0
@@ -144,7 +142,6 @@ class streamInit:
                 outside = False
                 
                 if (integration == 'simple'):
-                    #while ((l < lMax) and (xx[2] < p.Oz+p.Lz+p.dz) and (sl < iterMax-1) and (not(np.isnan(xx[0]))) and (outside == False)):
                     while ((l < lMax) and (xx[2] < p.Oz+p.Lz) and (sl < iterMax-1) and (not(np.isnan(xx[0]))) and (outside == False)):
                         # (a) single step (midpoint method)                    
                         xMid = xx + 0.5*dh*gm.vecInt(xx, B0, p, interpolation)
@@ -173,12 +170,10 @@ class streamInit:
                             if ((dh > hMax) or (np.isnan(dh))):
                                 dh = hMax
                             # check if this point lies outside the domain
-                            #if ((xx[0] < p.Ox-p.dx) or (xx[0] > p.Ox+p.Lx+p.dx) or (xx[1] < p.Oy-p.dy) or (xx[1] > p.Oy+p.Ly+p.dy) or (xx[2] < p.Oz-p.dz) or (xx[2] > p.Oz+p.Lz+p.dz)):
                             if ((xx[0] < p.Ox-p.dx) or (xx[0] > p.Ox+p.Lx+p.dx) or (xx[1] < p.Oy-p.dy) or (xx[1] > p.Oy+p.Ly+p.dy) or (xx[2] < p.Oz) or (xx[2] > p.Oz+p.Lz)):
                                 outside = True
                                 
                 if (integration == 'RK6'):
-                    #while ((l < lMax) and (xx[2] < p.Oz+p.Lz+p.dz) and (sl < iterMax) and (not(np.isnan(xx[0]))) and (outside == False)):
                     while ((l < lMax) and (xx[2] < p.Oz+p.Lz) and (sl < iterMax) and (not(np.isnan(xx[0]))) and (outside == False)):
                         k[0,:] = dh*gm.vecInt(xx, B0, p, interpolation)                            
                         k[1,:] = dh*gm.vecInt(xx + b[1,0]*k[0,:], B0, p, interpolation)
@@ -208,7 +203,6 @@ class streamInit:
                             if ((dh > hMax) or (np.isnan(dh))):
                                 dh = hMax
                             # check if this point lies outside the domain
-                            #if ((xx[0] < p.Ox-p.dx) or (xx[0] > p.Ox+p.Lx+p.dx) or (xx[1] < p.Oy-p.dy) or (xx[1] > p.Oy+p.Ly+p.dy) or (xx[2] < p.Oz-p.dz) or (xx[2] > p.Oz+p.Lz+p.dz)):
                             if ((xx[0] < p.Ox-p.dx) or (xx[0] > p.Ox+p.Lx+p.dx) or (xx[1] < p.Oy-p.dy) or (xx[1] > p.Oy+p.Ly+p.dy) or (xx[2] < p.Oz) or (xx[2] > p.Oz+p.Lz)):
                                 outside = True
                         if ((dh > hMax) or (delta == 0) or (np.isnan(dh))):
@@ -376,7 +370,6 @@ class mapStream:
         
         # read the current state
         data = gm.readDump(dataDir = dataDir, fileName = dumpFile)
-        #p = gm.readParams(dataDir = dataDir, fileName = dumpFile)
         p = data.p
         xx = data.grid
         
