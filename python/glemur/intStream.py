@@ -10,15 +10,16 @@ from vtk.util import numpy_support as VN
 from os import listdir
 import natsort
 
+
 class intStream:
     """
-    intStream -- Holds the streamline object amended by integrated quantities.
+    intStream -- Holds the field line integrated quantities.
     """
 
     def __init__(self, intQ = ['Jp'], dataDir = 'data', streamFileInit = 'streamInit.vtk', streamFile = 'stream.vtk', dumpFile = 'save.vtk', mapFile = 'map.vtk', interpolation = 'weighted', s0 = [], s = []):
         """
-        Amend the stream object 's' by the integrated quantities. If it is not passed, read it.
-        Make sure 'streamFile' and 'dumpFile' are from the same time or you will unexpected results.
+        Compute the integrated quantities. If the streamline objects are not passed, read them.
+        Make sure 'streamFile' and 'dumpFile' are from the same time or you will get unexpected results.
         
         call signature:
         
@@ -62,12 +63,10 @@ class intStream:
         if (s == []):
             s = gm.readStream(dataDir = dataDir, streamFile = streamFile)
         data = gm.readDump(dataDir = dataDir, fileName = dumpFile)
-        #p    = gm.readParams(dataDir = dataDir, fileName = dumpFile)
         p    = s.p
         
         self.x0 = s.x0
         self.y0 = s.y0
-        #self.sl = s.sl
         self.tracers0 = s.tracers[:,:,:,0]  
         self.p  = p
         self.sub = s.sub
@@ -166,16 +165,16 @@ class intStream:
                         ll[k-1] = l - dl/2
                     # integrate the quantities
                     if needJ:
-                        Jp[i,j] += np.dot((JJ2+JJ1), (xx2-xx1))
+                        Jp[i,j] += np.dot((JJ2+JJ1), (xx2-xx1)) # division by 2 done later
                     if (needJ and needB):
-                        JB[i,j] += np.dot((JJ2+JJ1), (BB2+BB1))*dl
+                        JB[i,j] += np.dot((JJ2+JJ1), (BB2+BB1))*dl   # division by 4 done later
                         lamTmp[k-1] = np.dot((JJ2+JJ1), (BB2+BB1))/np.dot((BB2+BB1), (BB2+BB1))
                         lam[i,j] += lamTmp[k-1]*dl
                         deltaLam[i,j] += (np.dot(JJ2,BB2)/np.dot(BB2,BB2) - np.dot(JJ1,BB1)/np.dot(BB1,BB1))/dl
                         epsilonTmp[k-1] = np.linalg.norm(np.cross((JJ2+JJ1), (BB2+BB1)))/np.dot((BB2+BB1), (BB2+BB1))
                         epsilon[i,j] += epsilonTmp[k-1]*dl
                         twist[i,j] += np.dot((JJ2+JJ1), (BB2+BB1))/(np.linalg.norm(JJ2+JJ1)*np.linalg.norm(BB2+BB1))*dl
-                    xx1 = xx2; JJ1 = JJ2
+                    xx1 = xx2; JJ1 = JJ2; BB1 = BB2
                 if needJ:
                     Jp[i,j] = Jp[i,j]/2
                     arrays['Jp'].SetValue(i+j*len(s.x0), Jp[i,j])
