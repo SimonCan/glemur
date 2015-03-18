@@ -187,6 +187,7 @@ int main(int argc, char* argv[])
         writeTs(p, red, t, dt, 0, 0.);
     }
     else {
+    	initResiduals(p, &red);
         readState(h, p, &t, &dt);
 		setPeriHost(h.B0, p);
 		setGridPeriHost(h.xb, p);
