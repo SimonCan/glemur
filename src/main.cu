@@ -177,6 +177,7 @@ int main(int argc, char* argv[])
 
     if (p.fRestart == false) {
         remove("data/save.vtk");
+    	initResiduals(p, &red);
         initState(h, p, &red);
         initDistortion(h.xb, p);
 		setPeriHost(h.B0, p);
