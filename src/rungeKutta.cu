@@ -111,7 +111,8 @@ __global__ void kk(struct varsDev_t d, int dimX, int dimY, int dimZ, int n, REAL
     REAL *ks       = &Js[3*(dimX-2)*(dimY-2)*(dimZ-2)];  	// intermediate steps for RK
 	REAL *Us	   = &ks[6*6*(dimX-2)*(dimY-2)*(dimZ-2)*dev_p.inertia];	// velocity field
 	REAL *detJacS  = &Us[3*(dimX-2)*(dimY-2)*(dimZ-2)*dev_p.inertia];	// determinant of the Jacobian (1/density)
-	REAL *gradPS   = &detJacS[(dimX-2)*(dimY-2)*(dimZ-2)*dev_p.inertia*dev_p.pressure];	// pressure gradient
+	REAL *gradPS   = &ks[3*6*(dimX-2)*(dimY-2)*(dimZ-2)*(1-dev_p.inertia)*dev_p.pressure
+					     + (6*6+3+1)*(dimX-2)*(dimY-2)*(dimZ-2)*dev_p.inertia*dev_p.pressure];	// pressure gradient
 
 	nVar = 3;
 	if (dev_p.inertia == true)
@@ -130,7 +131,7 @@ __global__ void kk(struct varsDev_t d, int dimX, int dimY, int dimZ, int n, REAL
                 Us[  l + (p+0)*3 + (q+0)*blockDim.x*3 + (r+0)*blockDim.x*blockDim.y*3] =
                 d.uu[l + (i+0)*3 + (j+0)*dev_p.nx*3   + (k+0)*dev_p.nx*dev_p.ny*3];
             if (dev_p.pressure == true)
-                gradPS[  l + (p+0)*3 + (q+0)*blockDim.x*3 + (r+0)*blockDim.x*blockDim.y*3] =
+                gradPS[ l + (p+0)*3 + (q+0)*blockDim.x*3 + (r+0)*blockDim.x*blockDim.y*3] =
                 d.gradP[l + (i+0)*3 + (j+0)*dev_p.nx*3   + (k+0)*dev_p.nx*dev_p.ny*3];
         }
         if (dev_p.inertia == true)
@@ -187,8 +188,8 @@ __global__ void kk(struct varsDev_t d, int dimX, int dimY, int dimZ, int n, REAL
 					*detJacS[p + q*blockDim.x + r*blockDim.x*blockDim.y];
 			   // add grad(p)
 			   if (dev_p.pressure == true)
-				   ks[3+l + p*3 + q*blockDim.x*3 + r*blockDim.x*blockDim.y*3 +
-					n*blockDim.x*blockDim.y*blockDim.z*3] += -dt*gradPS[l + p*3 + q*blockDim.x*3 + r*blockDim.x*blockDim.y*3];
+				   ks[3+l + p*6 + q*blockDim.x*6 + r*blockDim.x*blockDim.y*6 + n*blockDim.x*blockDim.y*blockDim.z*6] +=
+				       -dt*gradPS[l + p*3 + q*blockDim.x*3 + r*blockDim.x*blockDim.y*3];
 			}
 		}
 	}

@@ -137,8 +137,8 @@ int main(int argc, char* argv[])
     printf("initial B: %s\n", p.bInit);
     if (p.inertia == true)
     	printf("initial U: %s\n", p.uInit);
-    if (p.pressure = true)
-    	printf("include pressure gradiant with beta = %f\n", p.beta);
+    if (p.pressure == true)
+    	printf("include pressure gradient with beta = %f\n", p.beta);
 
     if (p.fRestart == true)
         readGrid(p);

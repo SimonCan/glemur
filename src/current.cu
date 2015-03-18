@@ -169,11 +169,11 @@ __global__ void JClassic(struct varsDev_t d, int dimX, int dimY, int dimZ)
 			d2x_dX2[l][0][2] = (xbs[  l + (p+2)*3 + (q+1)*dimX*3  + (r+2)*dimX*dimY*3] -
 								xbs[  l + (p+2)*3 + (q+1)*dimX*3  + (r+0)*dimX*dimY*3] -
 								xbs[  l + (p+0)*3 + (q+1)*dimX*3  + (r+2)*dimX*dimY*3] +
-								xbs[  l + (p+0)*3 + (q+1)*dimX*3  + (r+0)*dimX*dimY*3])*dev_p.dx*dev_p.dz/4;
+								xbs[  l + (p+0)*3 + (q+1)*dimX*3  + (r+0)*dimX*dimY*3])*dev_p.dx1*dev_p.dz1/4;
 			d2x_dX2[l][1][2] = (xbs[  l + (p+1)*3 + (q+2)*dimX*3  + (r+2)*dimX*dimY*3] -
 								xbs[  l + (p+1)*3 + (q+0)*dimX*3  + (r+2)*dimX*dimY*3] -
 								xbs[  l + (p+1)*3 + (q+2)*dimX*3  + (r+0)*dimX*dimY*3] +
-								xbs[  l + (p+1)*3 + (q+0)*dimX*3  + (r+0)*dimX*dimY*3])*dev_p.dy*dev_p.dz/4;
+								xbs[  l + (p+1)*3 + (q+0)*dimX*3  + (r+0)*dimX*dimY*3])*dev_p.dy1*dev_p.dz1/4;
 			d2x_dX2[l][1][0] = d2x_dX2[l][0][1];
 			d2x_dX2[l][2][0] = d2x_dX2[l][0][2];
 			d2x_dX2[l][2][1] = d2x_dX2[l][1][2];

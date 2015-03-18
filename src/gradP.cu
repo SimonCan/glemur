@@ -5,7 +5,7 @@
 #include "gradP.h"
 #include "maths.h"
 
-// compute grad(P) using the standard derivatives
+// compute grad(p) using the standard derivatives
 __global__ void gradPClassic(struct varsDev_t d, int dimX, int dimY, int dimZ)
 {
     int i = threadIdx.x + blockDim.x * blockIdx.x;
@@ -15,6 +15,7 @@ __global__ void gradPClassic(struct varsDev_t d, int dimX, int dimY, int dimZ)
     int q = threadIdx.y;
     int r = threadIdx.z;
     int l, a, b;
+    int u, v;					// auxiliary variables for reading in the block edges
     REAL jac[3][3], jac1[3][3]; // Jacobian matrix and its inverse
     REAL d2x_dX2[3][3][3];      // second order derivative of xb
     REAL det1;					// inverse determinant
@@ -26,11 +27,10 @@ __global__ void gradPClassic(struct varsDev_t d, int dimX, int dimY, int dimZ)
     // copy from global memory to shared memory for faster computation
     if ((i < dev_p.nx) && (j < dev_p.ny) && (k < dev_p.nz)) {
 		det1 = 1/d.detJac[(i+1) + (j+1)*(dev_p.nx+2) + (k+1)*(dev_p.nx+2)*(dev_p.ny+2)];
- 	    printf("det1 = %f\n", det1);
         for (l = 0; l < 3; l++) {
             // assign the inner values without the boundaries
-            xbs[l + (p+1)*3 + (q+1)*dimX*3           + (r+1)*dimX*dimY*3] =
-            d.xb[ l + (i+1)*3 + (j+1)*(dev_p.nx+2)*3 + (k+1)*(dev_p.nx+2)*(dev_p.ny+2)*3];
+            xbs[ l + (p+1)*3 + (q+1)*dimX*3         + (r+1)*dimX*dimY*3] =
+            d.xb[l + (i+1)*3 + (j+1)*(dev_p.nx+2)*3 + (k+1)*(dev_p.nx+2)*(dev_p.ny+2)*3];
             // assign the block boundaries
             if (p == 0) {
             	xbs[ l + (p+0)*3 + (q+1)*dimX*3         + (r+1)*dimX*dimY*3] =
@@ -50,6 +50,39 @@ __global__ void gradPClassic(struct varsDev_t d, int dimX, int dimY, int dimZ)
             if (((r == (blockDim.z-1)) && (k < (dev_p.nz-1))) || (k == (dev_p.nz-1))) {
                 xbs[ l + (p+1)*3 + (q+1)*dimX*3         + (r+2)*dimX*dimY*3] =
                 d.xb[l + (i+1)*3 + (j+1)*(dev_p.nx+2)*3 + (k+2)*(dev_p.nx+2)*(dev_p.ny+2)*3]; }
+        }
+    }
+    __syncthreads();
+	// assign the block edges
+	if ((i < dev_p.nx) && (j < dev_p.ny) && (k < dev_p.nz)) {
+		for (l = 0; l < 3; l++) {
+			if ((((p == 0) && (q == 0)) || ((p == 0) && (q == (blockDim.y-1))) || ((p == (blockDim.x-1)) && (q == 0)) || ((p == (blockDim.x-1)) && (q == (blockDim.y-1)))
+				|| ((i == 0) && (j == (dev_p.ny-1))) || ((i == (dev_p.nx-1)) && (j == 0)) || ((i == (dev_p.nx-1)) && (j == (dev_p.ny-1))))
+			    || (((p == 0) || (p == (blockDim.x-1))) && (j == (dev_p.ny-1))) || (((q == 0) || (q == (blockDim.y-1))) && (i == (dev_p.nx-1)))) {
+            	u = (p+1)/blockDim.x; v = (q+1)/blockDim.y;
+            	if (i == (dev_p.nx-1)) u = 1;
+            	if (j == (dev_p.ny-1)) v = 1;
+            	xbs[ l + (p+2*u)*3    + (q+2*v)*dimX*3          + (r+1)*dimX*dimY*3] =
+            	d.xb[l + (i+2*u)*3    + (j+2*v)*(dev_p.nx+2)*3  + (k+1)*(dev_p.nx+2)*(dev_p.ny+2)*3];
+            }
+			if ((((p == 0) && (r == 0)) || ((p == 0) && (r == (blockDim.z-1))) || ((p == (blockDim.x-1)) && (r == 0)) || ((p == (blockDim.x-1)) && (r == (blockDim.z-1)))
+				|| ((i == 0) && (k == (dev_p.nz-1))) || ((i == (dev_p.nx-1)) && (k == 0)) || ((i == (dev_p.nx-1)) && (k == (dev_p.nz-1))))
+				|| (((p == 0) || (p == (blockDim.x-1))) && (k == (dev_p.nz-1))) || (((r == 0) || (r == (blockDim.z-1))) && (i == (dev_p.nx-1)))) {
+            	u = (p+1)/blockDim.x; v = (r+1)/blockDim.z;
+            	if (i == (dev_p.nx-1)) u = 1;
+            	if (k == (dev_p.nz-1)) v = 1;
+            	xbs[ l + (p+2*u)*3    + (q+1)*dimX*3            + (r+2*v)*dimX*dimY*3] =
+            	d.xb[l + (i+2*u)*3    + (j+1)*(dev_p.nx+2)*3    + (k+2*v)*(dev_p.nx+2)*(dev_p.ny+2)*3];
+            }
+			if ((((r == 0) && (q == 0)) || ((r == 0) && (q == (blockDim.y-1))) || ((r == (blockDim.z-1)) && (q == 0)) || ((r == (blockDim.z-1)) && (q == (blockDim.y-1)))
+				|| ((j == 0) && (k == (dev_p.nz-1))) || ((j == (dev_p.ny-1)) && (k == 0)) || ((j == (dev_p.ny-1)) && (k == (dev_p.nz-1))))
+				|| (((r == 0) || (r == (blockDim.z-1))) && (j == (dev_p.ny-1))) || (((q == 0) || (q == (blockDim.y-1))) && (k == (dev_p.nz-1)))) {
+            	u = (q+1)/blockDim.y; v = (r+1)/blockDim.z;
+            	if (j == (dev_p.ny-1)) u = 1;
+            	if (k == (dev_p.nz-1)) v = 1;
+            	xbs[ l + (p+1)*3      + (q+2*u)*dimX*3          + (r+2*v)*dimX*dimY*3] =
+            	d.xb[l + (i+1)*3      + (j+2*u)*(dev_p.nx+2)*3  + (k+2*v)*(dev_p.nx+2)*(dev_p.ny+2)*3];
+            }
         }
     }
     __syncthreads();
@@ -94,11 +127,11 @@ __global__ void gradPClassic(struct varsDev_t d, int dimX, int dimY, int dimZ)
 			d2x_dX2[l][0][2] = (xbs[  l + (p+2)*3 + (q+1)*dimX*3  + (r+2)*dimX*dimY*3] -
 								xbs[  l + (p+2)*3 + (q+1)*dimX*3  + (r+0)*dimX*dimY*3] -
 								xbs[  l + (p+0)*3 + (q+1)*dimX*3  + (r+2)*dimX*dimY*3] +
-								xbs[  l + (p+0)*3 + (q+1)*dimX*3  + (r+0)*dimX*dimY*3])*dev_p.dx*dev_p.dz/4;
+								xbs[  l + (p+0)*3 + (q+1)*dimX*3  + (r+0)*dimX*dimY*3])*dev_p.dx1*dev_p.dz1/4;
 			d2x_dX2[l][1][2] = (xbs[  l + (p+1)*3 + (q+2)*dimX*3  + (r+2)*dimX*dimY*3] -
 								xbs[  l + (p+1)*3 + (q+0)*dimX*3  + (r+2)*dimX*dimY*3] -
 								xbs[  l + (p+1)*3 + (q+2)*dimX*3  + (r+0)*dimX*dimY*3] +
-								xbs[  l + (p+1)*3 + (q+0)*dimX*3  + (r+0)*dimX*dimY*3])*dev_p.dy*dev_p.dz/4;
+								xbs[  l + (p+1)*3 + (q+0)*dimX*3  + (r+0)*dimX*dimY*3])*dev_p.dy1*dev_p.dz1/4;
 			d2x_dX2[l][1][0] = d2x_dX2[l][0][1];
 			d2x_dX2[l][2][0] = d2x_dX2[l][0][2];
 			d2x_dX2[l][2][1] = d2x_dX2[l][1][2];
@@ -127,6 +160,6 @@ void gradP(dim3 dimGrid, dim3 dimBlock, int blockSize[3], struct varsDev_t d, st
 {
 	if (strncmp(p.pMethod, "Classic ", 8) == 0)
 		gradPClassic
-			<<<dimGrid, dimBlock, (blockSize[0]+2)*(blockSize[1]+2)*(blockSize[2]+2)*(3*2+1)*sizeof(*(d.xb))>>>
+			<<<dimGrid, dimBlock, (blockSize[0]+2)*(blockSize[1]+2)*(blockSize[2]+2)*3*sizeof(*(d.xb))>>>
 			(d, blockSize[0]+2, blockSize[1]+2, blockSize[2]+2);
 }

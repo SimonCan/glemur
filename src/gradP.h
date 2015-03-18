@@ -3,7 +3,7 @@
 #ifndef GRADP_H_
 #define GRADP_H_
 
-// compute grad(P) using the standard derivatives
+// compute grad(p) using the standard derivatives
 __global__ void gradPClassic(struct varsDev_t d, int dimX, int dimY, int dimZ);
 
 // determine which routine should be used for the current calculation

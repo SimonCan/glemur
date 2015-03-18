@@ -47,10 +47,10 @@ maths.o: maths.cu maths.h global.h
 current.o: current.cu current.h maths.o
 	$(NVCC) $(OPT) $(DEBUG) -DPRECISION=$(PRECISION) current.cu
 
-gradP.o: gradP.cu gradP.h global.h
+gradP.o: gradP.cu gradP.h maths.h
 	$(NVCC) $(OPT) $(DEBUG) -DPRECISION=$(PRECISION) gradP.cu
 
-rungeKutta.o: current.cu current.h global.h maths.o
+rungeKutta.o: rungeKutta.cu current.cu current.h global.h maths.o
 	$(NVCC) $(OPT) $(DEBUG) -DPRECISION=$(PRECISION) rungeKutta.cu
 
 boundaries.o: boundaries.cu boundaries.h global.h maths.o

@@ -54,7 +54,7 @@ int allocateMemory(struct varsHost_t *h, struct varsDev_t *d, struct parameters_
 		errCuda = cudaMalloc((void**)&(d->kk), 6*p.nx*p.ny*p.nz*6*sizeof(*(d->kk)));
 		if (cudaSuccess != errCuda) { printf("error: could not allocate device memory for kk\n"); exit(EXIT_FAILURE); } }
     if (p.pressure == true) {
-        errCuda = cudaMalloc((void**)&(d->gradP), p.nx*p.ny*p.nz*sizeof(*(d->gradP)));
+        errCuda = cudaMalloc((void**)&(d->gradP), 3*p.nx*p.ny*p.nz*sizeof(*(d->gradP)));
         if (cudaSuccess != errCuda) { printf("error: could not allocate device memory for gradP\n"); exit(EXIT_FAILURE); } }
     errCuda = cudaMalloc((void**)&(d->maxDelta), gridSize[0]*gridSize[1]*gridSize[2]*sizeof(*(d->maxDelta)));
     if (cudaSuccess != errCuda) { printf("error: could not allocate device memory for maxDelta\n"); exit(EXIT_FAILURE); }
