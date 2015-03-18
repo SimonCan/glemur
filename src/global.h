@@ -71,7 +71,9 @@ struct parameters_t {
     REAL 	     maxError;		 // maximum allowed error for the time step
     bool		 zUpdate;		 // flag for updating the z-coordinate for x_{i+1}
     bool		 inertia;		 // flag for the equation with inertia
+    bool		 pressure;		 // flag for the equation with inertia
     REAL		 nu;			 // viscosity parameter
+    REAL		 beta;			 // inverse initial density, or weight factor for the pressure gradient
     bool         jxbAver;        // flag for averaging JxB
     REAL		 jxbAverWeight;  // weight for the neighbours in case of JxB averaging
     bool         xPeri;			 // flag for periodic boundaries in x direction
@@ -79,6 +81,7 @@ struct parameters_t {
     bool         zPeri;			 // flag for periodic boundaries in z direction
     bool		 epsilonProf;    // flag for epsilon profile going to 0 at the boundary
     char         jMethod[30];	 // method for computing J
+    char		 pMethod[30];	 // method for computing grad(p)
     int          nTs;            // cadence for diagnostic output
     REAL         dtDump;         // time interval for state dumping
     REAL         dtSave;         // time interval for state saving (in case of a crash)
@@ -137,6 +140,7 @@ struct varsDev_t {
 	REAL    *uu;			// velocity field
 	REAL    *B;             // current magnetic field used to communicate boundaries
 	REAL    *J;             // electric current density
+	REAL	*gradP;		    // gradient of the pressure
 	REAL    *kk;            // vectors k for the adaptive time step Runge Kutta method
 	REAL    *xb_new;        // new deformed grid
 	REAL    *maxDelta;      // maximum for Delta (error) in the time stepping method

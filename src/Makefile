@@ -2,7 +2,7 @@
 
 EXEC = glemur
 TMP = tmp.o
-OBJ_CU = main.o io.o init.o memory.o diagnostics.o maths.o current.o rungeKutta.o boundaries.o blobsDomes.o
+OBJ_CU = main.o io.o init.o memory.o diagnostics.o maths.o current.o gradP.o rungeKutta.o boundaries.o blobsDomes.o
 OBJ  = $(OBJ_CU) readNamelist.o $(TMP)
 SRC  = main.cu
 PRECISION = 32
@@ -23,7 +23,7 @@ tmp.o: $(OBJ_CU)
 readNamelist.o: readNamelist.f90
 	$(FC) -cpp -DPRECISION=$(PRECISION)  -c readNamelist.f90
 
-main.o: main.cu main.h global.h io.o init.o memory.o diagnostics.o maths.o current.o rungeKutta.o boundaries.o
+main.o: main.cu main.h global.h io.o init.o memory.o diagnostics.o maths.o current.o gradP.o rungeKutta.o boundaries.o
 	$(NVCC) $(OPT) $(DEBUG) -DPRECISION=$(PRECISION) main.cu
 		
 io.o: io.cu io.h global.h blobsDomes.o
@@ -46,6 +46,9 @@ maths.o: maths.cu maths.h global.h
 
 current.o: current.cu current.h maths.o
 	$(NVCC) $(OPT) $(DEBUG) -DPRECISION=$(PRECISION) current.cu
+
+gradP.o: gradP.cu gradP.h global.h
+	$(NVCC) $(OPT) $(DEBUG) -DPRECISION=$(PRECISION) gradP.cu
 
 rungeKutta.o: current.cu current.h global.h maths.o
 	$(NVCC) $(OPT) $(DEBUG) -DPRECISION=$(PRECISION) rungeKutta.cu

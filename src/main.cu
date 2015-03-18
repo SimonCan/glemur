@@ -22,6 +22,7 @@
 #include "diagnostics.h"
 #include "maths.h"
 #include "current.h"
+#include "gradP.h"
 #include "rungeKutta.h"
 #include "boundaries.h"
 
@@ -136,6 +137,8 @@ int main(int argc, char* argv[])
     printf("initial B: %s\n", p.bInit);
     if (p.inertia == true)
     	printf("initial U: %s\n", p.uInit);
+    if (p.pressure = true)
+    	printf("include pressure gradiant with beta = %f\n", p.beta);
 
     if (p.fRestart == true)
         readGrid(p);
@@ -236,9 +239,12 @@ int main(int argc, char* argv[])
 
             current(dimGrid, dimBlock, blockSize, d, p);
             cudaDeviceSynchronize();
+            if (p.pressure == true)
+            	gradP(dimGrid, dimBlock, blockSize, d, p);
+            cudaDeviceSynchronize();
             // intermediate steps for the Runge-Kutta method
             kk
-                <<<dimGrid, dimBlock, blockSize[0]*blockSize[1]*blockSize[2]*(3*(9+7*p.inertia)+p.inertia) * sizeof(*(d.xb))>>>
+                <<<dimGrid, dimBlock, blockSize[0]*blockSize[1]*blockSize[2]*(3*(9+7*p.inertia+p.pressure)+p.inertia) * sizeof(*(d.xb))>>>
                 (d, blockSize[0]+2, blockSize[1]+2, blockSize[2]+2, n, dt);
             cudaDeviceSynchronize();
             setGridPeri(dimGrid2dPlusXY, dimGrid2dPlusXZ, dimGrid2dPlusYZ, dimBlock2d, d.xb, p);

@@ -53,7 +53,9 @@ subroutine readNamelist(p) bind(c, name='readnamelist')
         real(kind=CREAL)      :: maxError
         logical(kind=c_bool)  :: zUpdate
         logical(kind=c_bool)  :: inertia
+        logical(kind=c_bool)  :: pressure
         real(kind=CREAL)      :: nu
+        real(kind=CREAL)      :: beta
         logical(kind=c_bool)  :: jxbAver
         real(kind=CREAL)      :: jxbAverWeight
         logical(kind=c_bool)  :: xPeri
@@ -61,6 +63,7 @@ subroutine readNamelist(p) bind(c, name='readnamelist')
         logical(kind=c_bool)  :: zPeri
         logical(kind=c_bool)  :: epsilonProf
         character(kind=c_char, len=30) :: jMethod
+        character(kind=c_char, len=30) :: pMethod
         integer(kind=c_int)   :: nTs
         real(kind=CREAL)      :: dtDump
         real(kind=CREAL)      :: dtSave
@@ -114,7 +117,9 @@ subroutine readNamelist(p) bind(c, name='readnamelist')
     real(kind=CREAL)      :: maxError = 5e-5
     logical(kind=c_bool)  :: zUpdate = .True.
     logical(kind=c_bool)  :: inertia = .False.
+    logical(kind=c_bool)  :: pressure = .False.
     real(kind=CREAL)      :: nu = 1
+    real(kind=CREAL)      :: beta = 1
     logical(kind=c_bool)  :: jxbAver = .False.
     real(kind=CREAL)      :: jxbAverWeight = 0.
     logical(kind=c_bool)  :: xPeri = .False.
@@ -122,6 +127,7 @@ subroutine readNamelist(p) bind(c, name='readnamelist')
     logical(kind=c_bool)  :: zPeri = .False.
     logical(kind=c_bool)  :: epsilonProf = .True.
     character(kind=c_char, len=30) :: jMethod = "Stokes"
+    character(kind=c_char, len=30) :: pMethod = "Classic"
     integer(kind=c_int)   :: nTs = 10
     real(kind=CREAL)      :: dtDump = 10.
     real(kind=CREAL)      :: dtSave = 1.
@@ -157,8 +163,8 @@ subroutine readNamelist(p) bind(c, name='readnamelist')
         initDist, initShearA, initShearB, initShearK, pert, twist, &
         fRestart
 
-    namelist /run/ nCycle, dt0, dtMin, maxError, zUpdate, inertia, nu, jxbAver, jxbAverWeight, &
-        xPeri, yPeri, zPeri, epsilonProf, jMethod
+    namelist /run/ nCycle, dt0, dtMin, maxError, zUpdate, inertia, pressure, nu, beta, jxbAver, jxbAverWeight, &
+        xPeri, yPeri, zPeri, epsilonProf, jMethod, pMethod
 
     namelist /io/ nTs, dtDump, dtSave, dumpJ, dumpDetJac, dumpCellVol, dumpConvexity, dumpWedgeMin, &
         redB2, redB2f, redBMax, redJMax, redJxB_B2Max, redEpsilonStar, redErrB_1ez, redErrXb_XbAn, &
@@ -209,7 +215,9 @@ subroutine readNamelist(p) bind(c, name='readnamelist')
     p%maxError      = maxError
     p%zUpdate       = zUpdate
     p%inertia       = inertia
+    p%pressure      = pressure
     p%nu            = nu
+    p%beta          = beta
     p%jxbAver       = jxbAver
     p%jxbAverWeight = jxbAverWeight
     p%xPeri         = xPeri
@@ -217,6 +225,7 @@ subroutine readNamelist(p) bind(c, name='readnamelist')
     p%zPeri         = zPeri
     p%epsilonProf   = epsilonProf
     p%jMethod       = jMethod//C_NULL_CHAR
+    p%pMethod       = pMethod//C_NULL_CHAR
 
     p%nTs            = nTs
     p%dtDump         = dtDump
