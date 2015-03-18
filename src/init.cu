@@ -7,6 +7,24 @@
 #include "init.h"
 #include "blobsDomes.h"
 
+
+// set the residual magnetic energy for the corresponding configurations
+int initResiduals(struct parameters_t p, struct red_t *red)
+{
+    // residual magnetic energy
+    if (strncmp(p.bInit, "Pontin09 ", 9) == 0)
+    	red->B2res = 1*p.Lx*p.Ly*p.Lz*p.ampl;
+    if (strncmp(p.bInit, "analytic ", 9) == 0)
+    	red->B2res = 1*p.Lx*p.Ly*p.Lz*p.ampl;
+	if (strncmp(p.bInit, "homZ ", 5) == 0)
+		red->B2res = 1*p.Lx*p.Ly*p.Lz*p.ampl;
+	if (strncmp(p.bInit, "blobs ", 6) == 0)
+		red->B2res = 1*p.Lx*p.Ly*p.Lz*p.ampl;
+	if (strncmp(p.bInit, "Borromean ", 10) == 0)
+		red->B2res = 1*p.Lx*p.Ly*p.Lz*p.bGround;
+}
+
+
 // create the initial magnetic field B0, the initial grid xb and initial velocity (if needed)
 int initState(struct varsHost_t h, struct parameters_t p, struct red_t *red)
 {
@@ -256,18 +274,6 @@ int initState(struct varsHost_t h, struct parameters_t p, struct red_t *red)
                 for (i = 0; i < p.nx+2; i++)
 					h.B0[2 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] += p.bGround;
     }
-
-    // residual magnetic energy
-    if (strncmp(p.bInit, "Pontin09 ", 9) == 0)
-    	red->B2res = 1*p.Lx*p.Ly*p.Lz*p.ampl;
-    if (strncmp(p.bInit, "analytic ", 9) == 0)
-    	red->B2res = 1*p.Lx*p.Ly*p.Lz*p.ampl;
-	if (strncmp(p.bInit, "homZ ", 5) == 0)
-		red->B2res = 1*p.Lx*p.Ly*p.Lz*p.ampl;
-	if (strncmp(p.bInit, "blobs ", 6) == 0)
-		red->B2res = 1*p.Lx*p.Ly*p.Lz*p.ampl;
-	if (strncmp(p.bInit, "Borromean ", 10) == 0)
-		red->B2res = 1*p.Lx*p.Ly*p.Lz*p.bGround;
 
 	//
 	// velocity field uu
