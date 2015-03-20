@@ -144,9 +144,9 @@ __global__ void gradPClassic(struct varsDev_t d, int dimX, int dimY, int dimZ)
 		for (a = 0; a < 3; a++)
 			for (b = 0; b < 3; b++)
 				for (l = 0; l < 3; l++) {
-					d.gradP[0 + i*3 + j*dev_p.nx*3 + k*dev_p.nx*dev_p.ny*3] += d2x_dX2[a][b][l]*jac1[b][a]*jac1[l][0];
-					d.gradP[1 + i*3 + j*dev_p.nx*3 + k*dev_p.nx*dev_p.ny*3] += d2x_dX2[a][b][l]*jac1[b][a]*jac1[l][1];
-					d.gradP[2 + i*3 + j*dev_p.nx*3 + k*dev_p.nx*dev_p.ny*3] += d2x_dX2[a][b][l]*jac1[b][a]*jac1[l][2];
+					d.gradP[0 + i*3 + j*dev_p.nx*3 + k*dev_p.nx*dev_p.ny*3] -= d2x_dX2[a][b][l]*jac1[b][a]*jac1[l][0];
+					d.gradP[1 + i*3 + j*dev_p.nx*3 + k*dev_p.nx*dev_p.ny*3] -= d2x_dX2[a][b][l]*jac1[b][a]*jac1[l][1];
+					d.gradP[2 + i*3 + j*dev_p.nx*3 + k*dev_p.nx*dev_p.ny*3] -= d2x_dX2[a][b][l]*jac1[b][a]*jac1[l][2];
 				}
 		d.gradP[0 + i*3 + j*dev_p.nx*3  + k*dev_p.nx*dev_p.ny*3] *= dev_p.beta*det1;
 		d.gradP[1 + i*3 + j*dev_p.nx*3  + k*dev_p.nx*dev_p.ny*3] *= dev_p.beta*det1;
