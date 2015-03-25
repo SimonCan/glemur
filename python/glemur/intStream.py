@@ -188,7 +188,11 @@ class intStream:
                         Jn[2] = np.sign(Jtmp[2])/np.sqrt(1 + (Jtmp[0]/Jtmp[2])**2 + (Jtmp[1]/Jtmp[2])**2)
                         Jn = Jn/np.linalg.norm(Jn)
                         twist[i,j] += np.dot(Jn, (BB2+BB1))/np.linalg.norm(BB2+BB1)*dl
-                    xx1 = xx2; JJ1 = JJ2; BB1 = BB2
+                    xx1 = xx2
+                    if needJ:
+                        JJ1 = JJ2
+                    if needB:
+                        BB1 = BB2
                 if needJ:
                     Jp[i,j] = Jp[i,j]/2
                     arrays['Jp'].SetValue(i+j*len(s.x0), Jp[i,j])
