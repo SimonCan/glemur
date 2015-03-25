@@ -160,8 +160,8 @@ class poincareMap:
             tmp[2] = np.array([s.lMax], dtype = 'float32'); field = VN.numpy_to_vtk(tmp[2]); field.SetName('lMax'); fieldData.AddArray(field)
             tmp[3] = np.array([s.tol], dtype = 'float32'); field = VN.numpy_to_vtk(tmp[3]); field.SetName('tol'); fieldData.AddArray(field)
             tmp[4] = np.array([s.iterMax], dtype = 'int32'); field = VN.numpy_to_vtk(tmp[4]); field.SetName('iterMax'); fieldData.AddArray(field)
-            tmp[5] = np.array([s.nSeeds], dtype = 'int32'); field = VN.numpy_to_vtk(tmp[5]); field.SetName('nSeeds'); fieldData.AddArray(field)
-            tmp[6] = np.array([s.nIter], dtype = 'int32'); field = VN.numpy_to_vtk(tmp[6]); field.SetName('nIter'); fieldData.AddArray(field)
+            tmp[5] = np.array([nSeeds], dtype = 'int32'); field = VN.numpy_to_vtk(tmp[5]); field.SetName('nSeeds'); fieldData.AddArray(field)
+            tmp[6] = np.array([nIter], dtype = 'int32'); field = VN.numpy_to_vtk(tmp[6]); field.SetName('nIter'); fieldData.AddArray(field)
             # fields containing simulation parameters stored in paramFile
             dic = dir(p)
             params = range(len(dic))
