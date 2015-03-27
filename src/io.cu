@@ -73,7 +73,7 @@ int writeCudaInfo(int deviceCount, long int activeDevice)
         fprintf(fd, "memory bus width [bits]         %d\n",  devProp.memoryBusWidth);
         fprintf(fd, "l2 cache size [bytes]           %d\n",  devProp.l2CacheSize);
         fprintf(fd, "maximum threads per multiproc.  %d\n",  devProp.maxThreadsPerMultiProcessor);
-        fprintf(fd, "\n";
+        fprintf(fd, "\n");
     }
 
     fclose(fd);
