@@ -22,6 +22,7 @@ int writeCudaInfo(int deviceCount, long int activeDevice)
 
     fprintf(fd, "number of CUDA devices: %i\n\n", deviceCount);
     fprintf(fd, "active device: %li\n\n", activeDevice);
+    fprintf(fd, "PRECISION = %i\n", PRECISION);
 
     for(dev = 0; dev < deviceCount; dev++) {
         errCuda = cudaGetDeviceProperties(&devProp, dev);
@@ -61,17 +62,18 @@ int writeCudaInfo(int deviceCount, long int activeDevice)
         fprintf(fd, "max size 3D textures in y       %d\n",  devProp.maxTexture3D[1]);
         fprintf(fd, "max size 3D textures in z       %d\n",  devProp.maxTexture3D[2]);
         fprintf(fd, "concurrent kernels              %d\n",  devProp.concurrentKernels);
-        fprintf(fd, "ECC enabled                     %d\n",  devProp.ECCEnabled); //
-        fprintf(fd, "PCI bus ID                      %d\n",  devProp.pciBusID); //
-        fprintf(fd, "PCI device ID                   %d\n",  devProp.pciDeviceID); //
-        fprintf(fd, "PCI domain ID                   %d\n",  devProp.pciDomainID); //
-        fprintf(fd, "TCC drive                       %d\n",  devProp.tccDriver); //
-        fprintf(fd, "asynchronous engine count       %d\n",  devProp.asyncEngineCount); //
-        fprintf(fd, "unified addressing with host    %d\n",  devProp.unifiedAddressing); //
-        fprintf(fd, "memory clock rate [kHz]         %d\n",  devProp.memoryClockRate); //
-        fprintf(fd, "memory bus width [bits]         %d\n",  devProp.memoryBusWidth); //
-        fprintf(fd, "l2 cache size [bytes]           %d\n",  devProp.l2CacheSize); //
-        fprintf(fd, "maximum threads per multiproc.  %d\n",  devProp.maxThreadsPerMultiProcessor); //
+        fprintf(fd, "ECC enabled                     %d\n",  devProp.ECCEnabled);
+        fprintf(fd, "PCI bus ID                      %d\n",  devProp.pciBusID);
+        fprintf(fd, "PCI device ID                   %d\n",  devProp.pciDeviceID);
+        fprintf(fd, "PCI domain ID                   %d\n",  devProp.pciDomainID);
+        fprintf(fd, "TCC drive                       %d\n",  devProp.tccDriver);
+        fprintf(fd, "asynchronous engine count       %d\n",  devProp.asyncEngineCount);
+        fprintf(fd, "unified addressing with host    %d\n",  devProp.unifiedAddressing);
+        fprintf(fd, "memory clock rate [kHz]         %d\n",  devProp.memoryClockRate);
+        fprintf(fd, "memory bus width [bits]         %d\n",  devProp.memoryBusWidth);
+        fprintf(fd, "l2 cache size [bytes]           %d\n",  devProp.l2CacheSize);
+        fprintf(fd, "maximum threads per multiproc.  %d\n",  devProp.maxThreadsPerMultiProcessor);
+        fprintf(fd, "\n";
     }
 
     fclose(fd);
