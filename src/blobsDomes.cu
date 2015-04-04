@@ -70,28 +70,28 @@ int initBlobsDome(struct varsHost_t h, struct parameters_t p)
 						pow(z[k] + 25.8, 2.0), -3.0 / 2.0) * (x[i] - 7.8) + 18.95 * pow(pow(x[i] - 7.8,
 						2.0) + pow(y[j] - 8.2, 2.0) + pow(z[k] + 27.6, 2.0), -3.0 / 2.0) * (x[i] - 7.8)
 						+ 16.0 * pow(pow(x[i] - 7.8, 2.0) + pow(y[j] + 8.2, 2.0) + pow(z[k] - 25.8,
-						2.0), -3.0 / 2.0) * (x[i] - 7.8) - y[j] * sqrt(2.0) * exp(-pow(x[i] - 0.1e1,
-						2.0) / 2.0 - y[j] * y[j] / 2.0 - pow(z[k] + 0.20e2, 2.0) / 4.0) * p.twist - y[j]
-						* sqrt(2.0) * exp(-pow(x[i] + 0.1e1, 2.0) / 2.0 - y[j] * y[j] / 2.0 - pow(z[k] +
-						0.12e2, 2.0) / 4.0) * p.twist - y[j] * sqrt(2.0) * exp(-pow(x[i] - 0.1e1, 2.0) /
+						2.0), -3.0 / 2.0) * (x[i] - 7.8) - y[j] * sqrt(2.0) * exp(-pow(x[i] - 1.0,
+						2.0) / 2.0 - y[j] * y[j] / 2.0 - pow(z[k] + 20.0, 2.0) / 4.0) * p.twist - y[j]
+						* sqrt(2.0) * exp(-pow(x[i] + 1.0, 2.0) / 2.0 - y[j] * y[j] / 2.0 - pow(z[k] +
+						0.12e2, 2.0) / 4.0) * p.twist - y[j] * sqrt(2.0) * exp(-pow(x[i] - 1.0, 2.0) /
 						2.0 - y[j] * y[j] / 2.0 - pow(z[k] + 4.0, 2.0) / 4.0) * p.twist - y[j] *
-						sqrt(2.0) * exp(-pow(x[i] + 0.1e1, 2.0) / 2.0 - y[j] * y[j] / 2.0 - pow(z[k] -
-						4.0, 2.0) / 4.0) * p.twist - y[j] * sqrt(2.0) * exp(-pow(x[i] - 0.1e1, 2.0) /
+						sqrt(2.0) * exp(-pow(x[i] + 1.0, 2.0) / 2.0 - y[j] * y[j] / 2.0 - pow(z[k] -
+						4.0, 2.0) / 4.0) * p.twist - y[j] * sqrt(2.0) * exp(-pow(x[i] - 1.0, 2.0) /
 						2.0 - y[j] * y[j] / 2.0 - pow(z[k] - 0.12e2, 2.0) / 4.0) * p.twist - y[j] *
-						sqrt(2.0) * exp(-pow(x[i] + 0.1e1, 2.0) / 2.0 - y[j] * y[j] / 2.0 - pow(z[k] -
-						0.20e2, 2.0) / 4.0) * p.twist);
+						sqrt(2.0) * exp(-pow(x[i] + 1.0, 2.0) / 2.0 - y[j] * y[j] / 2.0 - pow(z[k] -
+						20.0, 2.0) / 4.0) * p.twist);
 				h.B0[1 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = p.ampl*(
-						(2 * x[i] - 2) * sqrt(2.0) * exp(- (int) pow( (x[i] - 1),  2) / 2.0 -
-						y[j] * y[j] / 2.0 -  (int) pow( (z[k] + 20),  2) / 4.0) * p.twist / 2.0 +  (2 *
-						x[i] + 2) * sqrt(2.0) * exp(- (int) pow( (x[i] + 1),  2) / 2.0 - y[j] * y[j] /
-						2.0 -  (int) pow( (z[k] + 12),  2) / 4.0) * p.twist / 2.0 +  (2 * x[i] - 2) *
-						sqrt(2.0) * exp(- (int) pow( (x[i] - 1),  2) / 2.0 - y[j] * y[j] / 2.0 -  (int)
+						(2 * x[i] - 2) * sqrt(2.0) * exp(-pow( (x[i] - 1),  2) / 2.0 -
+						y[j] * y[j] / 2.0 - pow( (z[k] + 20),  2) / 4.0) * p.twist / 2.0 +  (2 *
+						x[i] + 2) * sqrt(2.0) * exp(-pow( (x[i] + 1),  2) / 2.0 - y[j] * y[j] /
+						2.0 - pow( (z[k] + 12),  2) / 4.0) * p.twist / 2.0 +  (2 * x[i] - 2) *
+						sqrt(2.0) * exp(-pow( (x[i] - 1),  2) / 2.0 - y[j] * y[j] / 2.0 -
 						pow( (z[k] + 4),  2) / 4.0) * p.twist / 2.0 +  (2 * x[i] + 2) * sqrt(2.0) *
-						exp(- (int) pow( (x[i] + 1),  2) / 2.0 - y[j] * y[j] / 2.0 -  (int) pow( (z[k] -
-						4),  2) / 4.0) * p.twist / 2.0 +  (2 * x[i] - 2) * sqrt(2.0) * exp(- (int) pow(
-						(x[i] - 1),  2) / 2.0 - y[j] * y[j] / 2.0 -  (int) pow( (z[k] - 12),  2) / 4.0)
-						* p.twist / 2.0 +  (2 * x[i] + 2) * sqrt(2.0) * exp(- (int) pow( (x[i] + 1),  2)
-						/ 2.0 - y[j] * y[j] / 2.0 -  (int) pow( (z[k] - 20),  2) / 4.0) * p.twist / 2.0
+						exp(-pow( (x[i] + 1),  2) / 2.0 - y[j] * y[j] / 2.0 - pow( (z[k] -
+						4),  2) / 4.0) * p.twist / 2.0 +  (2 * x[i] - 2) * sqrt(2.0) * exp(-pow(
+						(x[i] - 1),  2) / 2.0 - y[j] * y[j] / 2.0 - pow( (z[k] - 12),  2) / 4.0)
+						* p.twist / 2.0 +  (2 * x[i] + 2) * sqrt(2.0) * exp(-pow( (x[i] + 1),  2)
+						/ 2.0 - y[j] * y[j] / 2.0 - pow( (z[k] - 20),  2) / 4.0) * p.twist / 2.0
 						- 18.95 * pow(pow( x[i] - 0.2, 2.0) + pow(y[j] + 8.2, 2.0) + pow( z[k] - 27.6,
 						2.0), -3.0 / 2.0) * (y[j] + 8.2) - 16.0 * pow(pow( x[i] - 0.2, 2.0) + pow(y[j] +
 						7.8, 2.0) + pow( z[k] + 25.8, 2.0), -3.0 / 2.0) * (y[j] + 7.8) + 18.95 *
@@ -144,7 +144,7 @@ int initBlobsDome(struct varsHost_t h, struct parameters_t p)
 						27.6, 2.0), -3.0 / 2.0) * (y[j] + 7.8) + 16.0 * pow(pow( x[i] - 0.2, 2.0) +
 						pow(y[j] + 8.2, 2.0) + pow( z[k] - 25.8, 2.0), -3.0 / 2.0) * (y[j] + 8.2));
 				h.B0[2 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = p.ampl*(
-						0.1e1 + 16.0 * pow(pow(x[i] - 7.8, 2.0) + pow(y[j] - 7.8, 2.0) + pow(z[k]
+						1.0 + 16.0 * pow(pow(x[i] - 7.8, 2.0) + pow(y[j] - 7.8, 2.0) + pow(z[k]
 						- 25.8, 2.0), -3.0 / 2.0) * (z[k] - 25.8) - 18.95 * pow(pow(x[i] - 7.8, 2.0) +
 						pow(y[j] - 7.8, 2.0) + pow(z[k] - 27.6, 2.0), -3.0 / 2.0) * (z[k] - 27.6) - 16.0
 						* pow(pow(x[i] - 7.8, 2.0) + pow(y[j] - 8.2, 2.0) + pow(z[k] + 25.8, 2.0), -3.0
@@ -609,7 +609,7 @@ int initBlobsDomes2(struct varsHost_t h, struct parameters_t p)
 						(x[i] * x[i]) + pow(y[j] - 0.80e1, 0.2e1) + pow( z[k] - 0.27e2, 0.2e1), -0.3e1 /
 						0.2e1) * (y[j] - 0.80e1));
 				h.B0[2 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = p.ampl*(
-						0.1e1 + 0.20e1 * pow(pow(x[i] + 0.70e1, 0.2e1) + pow(y[j] - 0.90e1, 0.2e1)
+						1.0 + 0.20e1 * pow(pow(x[i] + 0.70e1, 0.2e1) + pow(y[j] - 0.90e1, 0.2e1)
 						+ pow(z[k] - 0.2475e2, 0.2e1), -0.3e1 / 0.2e1) * (z[k] - 0.2475e2) + 0.20e1 *
 						pow(pow(x[i] + 0.90e1, 0.2e1) + pow(y[j] - 0.70e1, 0.2e1) + pow(z[k] - 0.2475e2,
 						0.2e1), -0.3e1 / 0.2e1) * (z[k] - 0.2475e2) - 0.20e1 * pow(pow(x[i] +

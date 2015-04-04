@@ -22,7 +22,7 @@ int writeCudaInfo(int deviceCount, long int activeDevice)
 
     fprintf(fd, "number of CUDA devices: %i\n\n", deviceCount);
     fprintf(fd, "active device: %li\n\n", activeDevice);
-    fprintf(fd, "PRECISION = %i\n", PRECISION);
+    fprintf(fd, "PRECISION = %i\n\n", PRECISION);
 
     for(dev = 0; dev < deviceCount; dev++) {
         errCuda = cudaGetDeviceProperties(&devProp, dev);
