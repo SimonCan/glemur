@@ -217,9 +217,9 @@ int initBlobsDomeShort(struct varsHost_t h, struct parameters_t p)
             for (i = 0; i < p.nx+2; i++) {
                 x[i] = p.dx*(i-1) + p.Ox;
 				h.B0[0 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = p.ampl*(
-						-y[j] * sqrt(2.0) * exp(- (int) pow( (x[i] - 1),  2.0) / 2.0 - y[j] * y[j]
-						/ 2.0 -  (int) pow( (z[k] + 4),  2.0) / 4.0) * p.twist - y[j] * sqrt(2.0) *
-						exp(- (int) pow( (x[i] + 1),  2.0) / 2.0 - y[j] * y[j] / 2.0 -  (int) pow( (z[k]
+						-y[j] * sqrt(2.0) * exp(- pow( (x[i] - 1),  2.0) / 2.0 - y[j] * y[j]
+						/ 2.0 -  pow( (z[k] + 4),  2.0) / 4.0) * p.twist - y[j] * sqrt(2.0) *
+						exp(- pow( (x[i] + 1),  2.0) / 2.0 - y[j] * y[j] / 2.0 -  pow( (z[k]
 						- 4),  2.0) / 4.0) * p.twist + 16.0 * pow(pow( x[i] + 8.2, 2.0) + pow(y[j] -
 						0.2, 2.0) + pow( z[k] - 9.8, 2.0), -3.0 / 2.0) * ( x[i] + 8.2) - 18.95 *
 						pow(pow( x[i] + 8.2, 2.0) + pow(y[j] - 0.2, 2.0) + pow( z[k] - 11.6, 2.0), -3.0
