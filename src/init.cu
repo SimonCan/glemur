@@ -166,14 +166,22 @@ int initState(struct varsHost_t h, struct parameters_t p, struct red_t *red)
         REAL ellipseParam, circleParam, circleRadius;
         REAL ellipsePos[3], circlePos[3], tangent[3], normal[3];
         REAL len;
+        // array containing the weighting factors for the field smoothing
+        int *nCompute;
 
     	// compute the step lengths such that no grid cell is left out
-        dEllipseParam = min(min(p.dx, p.dy), p.dz) / (p.major+p.width/2.) / p.stretch / 2.;
-        dCircleParam = dEllipseParam/(p.width/2.);
-        dCircleRadius = dCircleParam;
+        dEllipseParam = min(min(p.dx, p.dy), p.dz) / (p.major+p.width/2.) / p.stretch / 4.;
+//        dCircleParam = dEllipseParam/(p.width/2.);
+        dCircleParam = min(min(p.dx, p.dy), p.dz)/(p.width/2.) / p.stretch / 4.;
+//        dCircleRadius = dCircleParam;
+        dCircleRadius = min(min(p.dx, p.dy), p.dz) / 4.;
 
         // initialize to 0
         memset(h.B0, 0, sizeof(h.B0));
+
+        nCompute = (int *)malloc(p.nx*p.ny*p.nz*sizeof(*(nCompute)));
+        if (nCompute == NULL) { printf("error: could not allocate memory for nCompute\n"); return -1; }
+        memset(nCompute, 0, sizeof(nCompute));
 
         for (b = 0; b < 3; b++) {
         	ellipseParam = 0.;
@@ -256,8 +264,9 @@ int initState(struct varsHost_t h, struct parameters_t p, struct red_t *red)
 
 						if ((i >= 0) && (j >= 0) && (k >= 0) && (i < (p.nx+2)) && (j < (p.ny+2)) && (k < (p.nz+2)))
 							for (l = 0; l < 3; l++) {
-								h.B0[l + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = tangent[l]*p.ampl*
+								h.B0[l + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] += tangent[l]*p.ampl*
 										(exp(-(2*circleRadius/p.width)*(2*circleRadius/p.width))-exp(-1.)) / (1-exp(-1.));
+								nCompute[i + j*(p.nx+2) + k*(p.nx+2)*(p.ny+2)] += 1;
 							}
 
 						circleParam = circleParam + dCircleParam;
@@ -268,11 +277,15 @@ int initState(struct varsHost_t h, struct parameters_t p, struct red_t *red)
             }
         }
 
-		// add homogeneous magnetic field
+		// add homogeneous magnetic field and do the averageing
         for (k = 0; k < p.nz+2; k++)
             for (j = 0; j < p.ny+2; j++)
-                for (i = 0; i < p.nx+2; i++)
+                for (i = 0; i < p.nx+2; i++) {
+					if (nCompute[i + j*(p.nx+2) + k*(p.nx+2)*(p.ny+2)] > 1)
+						for (l = 0; l < 3; l++)
+							h.B0[l + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] /= nCompute[i + j*(p.nx+2) + k*(p.nx+2)*(p.ny+2)];
 					h.B0[2 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] += p.bGround;
+                }
     }
 
 	//
