@@ -156,9 +156,9 @@ int initState(struct varsHost_t h, struct parameters_t p, struct red_t *red)
                 if (strncmp(p.bInit, "tubeSetA ", 9) == 0) {
                 	r = sqrt(pow(x[i], 2) + pow(y[j], 2) + pow(z[k], 2));
                 	if (r > p.ar) {
-                		h.B0[0 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3 = 0;
-                		h.B0[1 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3 = 0;
-                		h.B0[2 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3 = 0;
+                		h.B0[0 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = 0;
+                		h.B0[1 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = 0;
+                		h.B0[2 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = 0;
                 	}
                 	else {
 						tmp = 4*pow(r/p.ar,3)/p.ar;	// B_p
@@ -173,9 +173,9 @@ int initState(struct varsHost_t h, struct parameters_t p, struct red_t *red)
                 if (strncmp(p.bInit, "tubeSetB ", 9) == 0) {
                 	r = sqrt(pow(x[i], 2) + pow(y[j], 2) + pow(z[k], 2));
                 	if (r > p.ar) {
-                		h.B0[0 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3 = 0;
-                		h.B0[1 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3 = 0;
-                		h.B0[2 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3 = 0;
+                		h.B0[0 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = 0;
+                		h.B0[1 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = 0;
+                		h.B0[2 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = 0;
                 	}
                 	else {
 						tmp = 4*pow(1-pow(r/p.ar,2),2)*r/(p.ar*p.ar);	// B_p
