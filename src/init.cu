@@ -30,7 +30,7 @@ int initState(struct varsHost_t h, struct parameters_t p, struct red_t *red)
 {
     int  i, j, k, l, b;
     REAL x[p.nx+2], y[p.ny+2], z[p.nz+2];
-    REAL tmp;
+    REAL tmp, r;
 
     //
     // magnetic field B0
@@ -150,6 +150,23 @@ int initState(struct varsHost_t h, struct parameters_t p, struct red_t *red)
                 	h.B0[0 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = p.ampl*(tmp*y[j]*p.twist - 2*p.pert*z[k]*exp(-z[k]*z[k]/(p.az*p.az))/(p.az*p.az));
                 	h.B0[1 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = -p.ampl*tmp*x[i]*p.twist;
                 	h.B0[2 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = p.ampl;
+                }
+
+                // twisted tubes suggested by G. Hornig 2015
+                if (strncmp(p.bInit, "tubesSetA ", 10) == 0) {
+                	r = sqrt(pow(x[i], 2) + pow(y[j], 2) + pow(z[k], 2));
+                	tmp = 4*pow(r/p.ar,3)/p.ar;	// B_p
+                	h.B0[0 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = p.ampl*tmp*y[j]/p.ar;
+                	h.B0[1 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = -p.ampl*tmp*x[i]/p.ar;
+                	h.B0[2 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = p.ampl*(sin(PI*r/(2*p.ar)) + r*PI/(2*p.ar)*cos(PI*r/2/p.ar))/r;
+                }
+                if (strncmp(p.bInit, "tubesSetB ", 10) == 0) {
+                	r = sqrt(pow(x[i], 2) + pow(y[j], 2) + pow(z[k], 2));
+                	tmp = 4*pow(1-pow(r/p.ar,2),2)*r/(p.ar*p.ar);	// B_p
+                	h.B0[0 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = p.ampl*tmp*y[j]/p.ar;
+                	h.B0[1 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = -p.ampl*tmp*x[i]/p.ar;
+                	h.B0[2 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] =
+                			p.ampl*(sin(PI/2*pow(r/p.ar,2)) + r*PI/pow(p.ar,3)*cos(PI/2*pow(r/p.ar,2)))/r;
                 }
 
                 // set the initial grid to undistorted
