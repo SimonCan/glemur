@@ -153,20 +153,40 @@ int initState(struct varsHost_t h, struct parameters_t p, struct red_t *red)
                 }
 
                 // twisted tubes suggested by G. Hornig 2015
-                if (strncmp(p.bInit, "tubesSetA ", 10) == 0) {
+                if (strncmp(p.bInit, "tubeSetA ", 9) == 0) {
                 	r = sqrt(pow(x[i], 2) + pow(y[j], 2) + pow(z[k], 2));
-                	tmp = 4*pow(r/p.ar,3)/p.ar;	// B_p
-                	h.B0[0 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = p.ampl*tmp*y[j]/p.ar;
-                	h.B0[1 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = -p.ampl*tmp*x[i]/p.ar;
-                	h.B0[2 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = p.ampl*(sin(PI*r/(2*p.ar)) + r*PI/(2*p.ar)*cos(PI*r/2/p.ar))/r;
+                	if (r > p.ar) {
+                		h.B0[0 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3 = 0;
+                		h.B0[1 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3 = 0;
+                		h.B0[2 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3 = 0;
+                	}
+                	else {
+						tmp = 4*pow(r/p.ar,3)/p.ar;	// B_p
+						h.B0[0 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = p.ampl*tmp*y[j]/p.ar;
+						h.B0[1 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = -p.ampl*tmp*x[i]/p.ar;
+						if (r > 0)
+							h.B0[2 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = p.ampl*(sin(PI*r/(2*p.ar)) + r*PI/(2*p.ar)*cos(PI*r/2/p.ar))/r;
+						else
+							h.B0[2 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = p.ampl*PI/p.ar;
+                	}
                 }
-                if (strncmp(p.bInit, "tubesSetB ", 10) == 0) {
+                if (strncmp(p.bInit, "tubeSetB ", 9) == 0) {
                 	r = sqrt(pow(x[i], 2) + pow(y[j], 2) + pow(z[k], 2));
-                	tmp = 4*pow(1-pow(r/p.ar,2),2)*r/(p.ar*p.ar);	// B_p
-                	h.B0[0 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = p.ampl*tmp*y[j]/p.ar;
-                	h.B0[1 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = -p.ampl*tmp*x[i]/p.ar;
-                	h.B0[2 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] =
-                			p.ampl*(sin(PI/2*pow(r/p.ar,2)) + r*PI/pow(p.ar,3)*cos(PI/2*pow(r/p.ar,2)))/r;
+                	if (r > p.ar) {
+                		h.B0[0 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3 = 0;
+                		h.B0[1 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3 = 0;
+                		h.B0[2 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3 = 0;
+                	}
+                	else {
+						tmp = 4*pow(1-pow(r/p.ar,2),2)*r/(p.ar*p.ar);	// B_p
+						h.B0[0 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = p.ampl*tmp*y[j]/p.ar;
+						h.B0[1 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = -p.ampl*tmp*x[i]/p.ar;
+						if (r > 0)
+							h.B0[2 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] =
+									p.ampl*(sin(PI/2*pow(r/p.ar,2)) + r*PI/pow(p.ar,3)*cos(PI/2*pow(r/p.ar,2)))/r;
+						else
+							h.B0[2 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = 0;
+                	}
                 }
 
                 // set the initial grid to undistorted
