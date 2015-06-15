@@ -162,8 +162,8 @@ int initState(struct varsHost_t h, struct parameters_t p, struct red_t *red)
                 	}
                 	else {
 						tmp = 4*pow(r/p.ar,3)/p.ar;	// B_p
-						h.B0[0 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = p.ampl*tmp*y[j]/p.ar;
-						h.B0[1 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = -p.ampl*tmp*x[i]/p.ar;
+						h.B0[0 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = p.ampl*tmp*y[j]/r;
+						h.B0[1 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = -p.ampl*tmp*x[i]/r;
 						if (r > 0)
 							h.B0[2 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = p.ampl*(sin(PI*r/(2*p.ar)) + r*PI/(2*p.ar)*cos(PI*r/2/p.ar))/r;
 						else
@@ -179,8 +179,8 @@ int initState(struct varsHost_t h, struct parameters_t p, struct red_t *red)
                 	}
                 	else {
 						tmp = 4*pow(1-pow(r/p.ar,2),2)*r/(p.ar*p.ar);	// B_p
-						h.B0[0 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = p.ampl*tmp*y[j]/p.ar;
-						h.B0[1 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = -p.ampl*tmp*x[i]/p.ar;
+						h.B0[0 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = p.ampl*tmp*y[j]/r;
+						h.B0[1 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = -p.ampl*tmp*x[i]/r;
 						if (r > 0)
 							h.B0[2 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] =
 									p.ampl*(sin(PI/2*pow(r/p.ar,2)) + r*PI/pow(p.ar,3)*cos(PI/2*pow(r/p.ar,2)))/r;
