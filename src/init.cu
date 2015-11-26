@@ -203,7 +203,7 @@ int initState(struct varsHost_t h, struct parameters_t p, struct red_t *red)
                 	h.B0[0 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = tmp*2*(p.phi2*p.ar*y[j]-p.phi1*x[i]*z[k]);
                 	h.B0[1 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = -tmp*2*(p.phi2*p.ar*x[i]+p.phi1*y[j]*z[k]);
                 	h.B0[2 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = tmp*p.phi1*(-p.ar*p.ar+x[i]*x[i]+y[j]*y[j]-z[k]*z[k]);
-                	h.B0[2 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] += p.bGround
+                	h.B0[2 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] += p.bGround;
                 }
 
                 // set the initial grid to undistorted
