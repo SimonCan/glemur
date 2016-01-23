@@ -102,7 +102,7 @@ subroutine readNamelist(p) bind(c, name='readnamelist')
     real(kind=CREAL)      :: width = 0.6
     real(kind=CREAL)      :: minor = 1.0, major = 2.5
     real(kind=CREAL)      :: stretch = 1.0
-    real(kind=CREAL)      :: bGround = 0.5
+    real(kind=CREAL)      :: bGround = 0.
     real(kind=CREAL), dimension(10) :: blobXc, blobYc, blobZc, blobZl, blobTwist, blobScale ! warning: no default values
     character(kind=c_char, len=30) ::  initDist = "none"
     real(kind=CREAL)      :: initShearA = 0.
