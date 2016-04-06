@@ -5,3 +5,4 @@ from glemur.streamlines import *
 from glemur.intStream import *
 from glemur.poincare import *
 from glemur.gm2pc import *
+from glemur.maths import *
