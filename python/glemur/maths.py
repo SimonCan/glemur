@@ -44,7 +44,7 @@ class grad:
                  jac[0, 0]*jac[1, 2]*jac[2, 1] - jac[0, 1]*jac[1, 0]*jac[2, 2] - jac[0, 2]*jac[1, 1]*jac[2, 0]                 
         # Compute the inverse Jacobian for the mapping.
         jacInv = np.zeros(jac.shape)
-        jacInv[0, 0, ...] = jac[1, 1, ...]*jac[2, 2, ...] - jac[0, 2, ...]*jac[1, 2, ...]
+        jacInv[0, 0, ...] = jac[1, 1, ...]*jac[2, 2, ...] - jac[1, 2, ...]*jac[2, 1, ...]
         jacInv[0, 1, ...] = jac[0, 2, ...]*jac[2, 1, ...] - jac[0, 1, ...]*jac[2, 2, ...]
         jacInv[0, 2, ...] = jac[0, 1, ...]*jac[1, 2, ...] - jac[0, 2, ...]*jac[1, 1, ...]
         jacInv[1, 0, ...] = jac[1, 2, ...]*jac[2, 0, ...] - jac[1, 0, ...]*jac[2, 2, ...]
