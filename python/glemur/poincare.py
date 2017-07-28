@@ -83,7 +83,7 @@ class poincareMap:
         p = gm.readParams(dataDir = dataDir, fileName = paramFile)
         
         if (len(x0) != len(y0)):
-            print "error: length of x0 != length of y0."
+            print("error: length of x0 != length of y0.")
             return -1
         if ((len(x0) == 0) and (len(y0) == 0)):
             x0 = np.random.random(nSeeds)*p.Lx + p.Ox
@@ -412,9 +412,9 @@ def poincareVid(dataDir = 'data', poincareInit = 'poincareInit.vtk', interpolati
     for f in files:
         if (str.find(f, 'dump') == 0):
             poincareFile = f.replace('dump', 'poincare')
-            print f
+            print(f)
             po.append(gm.mapPoincare(dataDir = dataDir, poincareInit = poincareInit, poincare = poincareFile, dumpFile = f, interpolation = interpolation))
-            print po[-1].p.t
+            print(po[-1].p.t)
     
     return po
 
@@ -446,7 +446,7 @@ def readPoincareVid(dataDir = 'data'):
 
     for f in files:
         if ((str.find(f, 'poincare') == 0) and (f != 'poincare.vtk') and (str.find(f, 'Init') == -1)):
-            print f
+            print(f)
             po.append(gm.readPoincare(dataDir = dataDir, poincare = f))
     
     return po

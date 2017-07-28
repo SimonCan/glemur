@@ -158,7 +158,7 @@ class streamInit:
                         if (dist2 > tol2):
                             dh = 0.5*dh
                             if (abs(dh) < hMin):
-                                print "Error: stepsize underflow"
+                                print("Error: stepsize underflow")
                                 break
                         else:
                             l += np.sqrt(np.sum((xx-xDouble)**2))
@@ -191,7 +191,7 @@ class streamInit:
                         if (delta2 > tol2):
                             dh = dh*(0.9*abs(tol/delta))**0.2
                             if (abs(dh) < hMin):
-                                print "Error: step size underflow"
+                                print("Error: step size underflow")
                                 break
                         else:
                             l += np.sqrt(np.sum((xx-xNew)**2))
@@ -480,9 +480,9 @@ def streamVid(dataDir = 'data', streamFileInit = 'streamInit.vtk', interpolation
     for f in files:
         if (str.find(f, 'dump') == 0):
             streamFile = f.replace('dump', 'stream')
-            print f
+            print(f)
             s.append(gm.mapStream(dataDir = dataDir, streamFileInit = streamFileInit, streamFile = streamFile, dumpFile = f, interpolation = interpolation))
-            print s[-1].p.t
+            print(s[-1].p.t)
     
     return s
 

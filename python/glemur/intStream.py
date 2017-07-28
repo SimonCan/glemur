@@ -101,10 +101,10 @@ class intStream:
         
         # check if the data has the necessarry attributes
         if (needJ and not(hasattr(data, 'jfield'))):
-            print "Error: missing attribute 'jfield' in data."
+            print("Error: missing attribute 'jfield' in data.")
             return -1
         if (needJ and not(hasattr(data, 'bfield'))):
-            print "Error: missing attribute 'bfield' in data."
+            print("Error: missing attribute 'bfield' in data.")
             return -1
 
         # add integrated quantities to intQ (because we can)
@@ -127,7 +127,7 @@ class intStream:
             arrays[q] = arr
          
         # initialize all arrays
-        print s.tracers.shape[1:3]
+        print(s.tracers.shape[1:3])
         if needJ:
             Jp = np.zeros(s.tracers.shape[1:3])
         if (needJ and needB):
@@ -387,9 +387,9 @@ def mapVid(intQ = ['Jp'], dataDir = 'data', streamFileInit = 'streamInit.vtk', i
         if (str.find(f, 'dump') == 0):
             streamFile = f.replace('dump', 'stream')
             mapFile = f.replace('dump', 'map')
-            print f
+            print(f)
             m.append(gm.intStream(intQ = intQ, dataDir = dataDir, streamFileInit = streamFileInit, streamFile = streamFile, dumpFile = f, mapFile = mapFile, interpolation = interpolation))
-            print m[-1].p.t
+            print(m[-1].p.t)
     
     return m
 
