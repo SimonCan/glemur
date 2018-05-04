@@ -4,9 +4,9 @@
 # Reads the dump files.
 
 import numpy as np
-import vtk as vtk
-from vtk import vtkStructuredPointsReader
-from vtk.util import numpy_support as VN
+import pyvtk as vtk
+from pyvtk import vtkStructuredPointsReader
+from pyvtk.util import numpy_support as VN
 
 
 class readB0:

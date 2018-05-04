@@ -5,8 +5,8 @@
 
 import numpy as np
 import glemur as gm
-import vtk as vtk
-from vtk.util import numpy_support as VN
+import pyvtk as vtk
+from pyvtk.util import numpy_support as VN
 from os import listdir
 import natsort
 

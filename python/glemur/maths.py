@@ -4,7 +4,7 @@
 # Contains some basic mathematical operations.
 
 import numpy as np
-import vtk as vtk
+import pyvtk as vtk
 #from vtk import vtkStructuredPointsReader
 #from vtk.util import numpy_support as VN
 
