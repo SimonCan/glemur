@@ -38,6 +38,8 @@ __device__ void normalize(REAL a[3]) {
 
 
 // atomic addition for doubles
+#if !defined(__CUDA_ARCH__) || __CUDA_ARCH__ >= 600
+#else
 __device__ double atomicAdd(double* address, double val)
 {
     unsigned long long int* address_as_ull =
@@ -49,6 +51,7 @@ __device__ double atomicAdd(double* address, double val)
     } while (assumed != old);
     return __longlong_as_double(old);
 }
+#endif
 
 
 // determine the maximum value in an array

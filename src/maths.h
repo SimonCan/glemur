@@ -18,7 +18,10 @@ __device__ REAL norm(REAL a[3]);
 __device__ void normalize(REAL a[3]);
 
 // atomic addition for doubles
+#if !defined(__CUDA_ARCH__) || __CUDA_ARCH__ >= 600
+#else
 __device__ double atomicAdd(double* address, double val);
+#endif
 
 // determine the maximum value in an array
 __global__ void maxBlock(REAL *var, REAL *maxVal, int size);
