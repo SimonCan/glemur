@@ -5,8 +5,8 @@
 
 import numpy as np
 import pyvtk as vtk
-from pyvtk import vtkStructuredPointsReader
-from pyvtk.util import numpy_support as VN
+from vtk import vtkStructuredPointsReader
+from vtk.util import numpy_support as VN
 
 
 class readB0:

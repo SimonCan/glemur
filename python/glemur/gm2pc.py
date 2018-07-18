@@ -7,7 +7,7 @@ import numpy as np
 import glemur as gm
 from scipy.interpolate import griddata
 import pyvtk as vtk
-from pyvtk.util import numpy_support as VN
+from vtk.util import numpy_support as VN
 import struct
 
 def gm2pc(dataDir = 'data', gmFile = 'save.vtk', pcFile = 'gm2pc.vtk', method = 'linear', nxyz = []): 
