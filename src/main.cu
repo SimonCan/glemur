@@ -75,29 +75,29 @@ int main(int argc, char* argv[])
     }
     printf("CUDA device count = %i\n", deviceCount);
     activeDevice = 0;
-    // parse the command line parameters
+    // parse the command line arguments
     while ((c = getopt(argc, argv, "d:")) != -1) {
-    	switch(c) {
-    		case 'd':
-    			activeDevice = strtol(optarg, NULL, 10);
-        		printf("case 'd'\n");
-    			if ((activeDevice == 0) and (optarg[0] != '0')) {
-    				printf("error: device number is not integer\n");
-    				return -1;
-    			}
-    			if ((activeDevice > deviceCount-1) or (activeDevice < 0)) {
-    				printf("error: device number is not valid\n");
-    				return -1;
-    			}
-    			break;
-    	}
+        switch(c) {
+            case 'd':
+                activeDevice = strtol(optarg, NULL, 10);
+                printf("case 'd'\n");
+                if ((activeDevice == 0) and (optarg[0] != '0')) {
+                    printf("error: device number is not integer\n");
+                    return -1;
+                }
+                if ((activeDevice > deviceCount-1) or (activeDevice < 0)) {
+                    printf("error: device number is not valid\n");
+                    return -1;
+                }
+                break;
+        }
     }
     cudaSetDevice(activeDevice);
     printf("Running on device %li\n", activeDevice);
 
     err = writeCudaInfo(deviceCount, activeDevice); // write CUDA device info into file
     if (err != 0) {
-        printf("error: could not write device properties into 'gpu.info'\n");
+        printf("error: could not write device properties into 'cuda.info'\n");
         return -1;
     }
 
@@ -111,12 +111,12 @@ int main(int argc, char* argv[])
 
     // increase the bank size for shared memory in case of double precision
     if (PRECISION == 64) {
-    	printf("bank size = 8 bytes\n");
-    	cudaDeviceSetSharedMemConfig(cudaSharedMemBankSizeEightByte);
+        printf("bank size = 8 bytes\n");
+        cudaDeviceSetSharedMemConfig(cudaSharedMemBankSizeEightByte);
     }
     else {
-    	printf("bank size = 4 bytes\n");
-    	cudaDeviceSetSharedMemConfig(cudaSharedMemBankSizeFourByte);
+        printf("bank size = 4 bytes\n");
+        cudaDeviceSetSharedMemConfig(cudaSharedMemBankSizeFourByte);
     }
 
     // read parameters from input file
@@ -125,20 +125,20 @@ int main(int argc, char* argv[])
     // check if the method is valid
     if ((strncmp(p.jMethod, "Classic ", 8) != 0) &&
         (strncmp(p.jMethod, "Stokes ", 7) != 0) &&
-    	(strncmp(p.jMethod, "Stokes4th ", 10) != 0) &&
-    	(strncmp(p.jMethod, "StokesQuint ", 12) != 0) &&
-    	(strncmp(p.jMethod, "StokesTri ", 10) != 0)) {
-    	printf("error: invalid method for computing J: %s\n", p.jMethod);
-    	return -1;
+        (strncmp(p.jMethod, "Stokes4th ", 10) != 0) &&
+        (strncmp(p.jMethod, "StokesQuint ", 12) != 0) &&
+        (strncmp(p.jMethod, "StokesTri ", 10) != 0)) {
+        printf("error: invalid method for computing J: %s\n", p.jMethod);
+        return -1;
     }
     else
-    	printf("method for J: %s\n", p.jMethod);
+        printf("method for J: %s\n", p.jMethod);
 
     printf("initial B: %s\n", p.bInit);
     if (p.inertia == true)
-    	printf("initial U: %s\n", p.uInit);
+        printf("initial U: %s\n", p.uInit);
     if (p.pressure == true)
-    	printf("include pressure gradient with beta = %f\n", p.beta);
+        printf("include pressure gradient with beta = %f\n", p.beta);
 
     if (p.fRestart == true)
         readGrid(p);
@@ -149,7 +149,7 @@ int main(int argc, char* argv[])
     blockSize[1] = 5 + BLCK_EXT + not(p.inertia);
     blockSize[2] = 5 + BLCK_EXT + not(p.inertia);
     if (p.inertia)
-		blockSize[2] = 4 + BLCK_EXT;	// needed to limit the amount of shared memory usage to 48 kB for double precision
+        blockSize[2] = 4 + BLCK_EXT;    // needed to limit the amount of shared memory usage to 48 kB for double precision
     gridSize[0] = (p.nx - 1)/blockSize[0] + 1;
     gridSize[1] = (p.ny - 1)/blockSize[1] + 1;
     gridSize[2] = (p.nz - 1)/blockSize[2] + 1;
@@ -177,21 +177,21 @@ int main(int argc, char* argv[])
 
     if (p.fRestart == false) {
         remove("data/save.vtk");
-    	initResiduals(p, &red);
+        initResiduals(p, &red);
         initState(h, p, &red);
         initDistortion(h.xb, p);
-		setPeriHost(h.B0, p);
-		setGridPeriHost(h.xb, p);
+        setPeriHost(h.B0, p);
+        setGridPeriHost(h.xb, p);
         writeB0(h.B0, p);
         dt = p.dt0;
         t = 0;
         writeTs(p, red, t, dt, 0, 0.);
     }
     else {
-    	initResiduals(p, &red);
+        initResiduals(p, &red);
         readState(h, p, &t, &dt);
-		setPeriHost(h.B0, p);
-		setGridPeriHost(h.xb, p);
+        setPeriHost(h.B0, p);
+        setGridPeriHost(h.xb, p);
     }
 
     // copy current state into device memory
@@ -206,8 +206,8 @@ int main(int argc, char* argv[])
     errCuda = cudaMemcpy(d.xb_new, d.xb, 3*(p.nx+2)*(p.ny+2)*(p.nz+2)*sizeof(*(d.xb_new)), cudaMemcpyDeviceToDevice);
     if (cudaSuccess != errCuda) { printf("error: could not copy 'xb' within the device\n"); exit(EXIT_FAILURE); }
     if (p.inertia == true) {
-		errCuda = cudaMemcpy(d.uu, h.uu, 3*p.nx*p.ny*p.nz*sizeof(*(d.uu)), cudaMemcpyHostToDevice);
-		if (cudaSuccess != errCuda) { printf("error: could not copy 'uu' to the device\n"); exit(EXIT_FAILURE); } }
+        errCuda = cudaMemcpy(d.uu, h.uu, 3*p.nx*p.ny*p.nz*sizeof(*(d.uu)), cudaMemcpyHostToDevice);
+        if (cudaSuccess != errCuda) { printf("error: could not copy 'uu' to the device\n"); exit(EXIT_FAILURE); } }
 
     // copy parameters into constant memory
     errCuda = cudaMemcpyToSymbol(dev_p, &p, sizeof(struct parameters_t));
@@ -230,19 +230,19 @@ int main(int argc, char* argv[])
     for (it = 0; (it < p.nCycle) && (dt > p.dtMin); it++)
     {
         for (n = 0; n < 6; n++) {
-        	// B = J.B0/Delta
+            // B = jac.B0/Delta
             B_JacB0
                 <<<dimGrid, dimBlock, 3*(blockSize[0]+2)*(blockSize[1]+2)*(blockSize[2]+2)*3*sizeof(*(d.xb))>>>
                 (d, blockSize[0]+2, blockSize[1]+2, blockSize[2]+2);
             cudaDeviceSynchronize();
             setBbound(dimGrid2dXY, dimGrid2dXZ, dimGrid2dYZ, dimBlock2d, d);
-			setPeri(dimGrid2dPlusXY, dimGrid2dPlusXZ, dimGrid2dPlusYZ, dimBlock2d, d.B, p);
-			cudaDeviceSynchronize();
+            setPeri(dimGrid2dPlusXY, dimGrid2dPlusXZ, dimGrid2dPlusYZ, dimBlock2d, d.B, p);
+            cudaDeviceSynchronize();
 
             current(dimGrid, dimBlock, blockSize, d, p);
             cudaDeviceSynchronize();
             if (p.pressure == true)
-            	gradP(dimGrid, dimBlock, blockSize, d, p);
+                gradP(dimGrid, dimBlock, blockSize, d, p);
             cudaDeviceSynchronize();
             // intermediate steps for the Runge-Kutta method
             kk
@@ -251,15 +251,15 @@ int main(int argc, char* argv[])
             cudaDeviceSynchronize();
             setGridPeri(dimGrid2dPlusXY, dimGrid2dPlusXZ, dimGrid2dPlusYZ, dimBlock2d, d.xb, p);
             setGridPeri(dimGrid2dPlusXY, dimGrid2dPlusXZ, dimGrid2dPlusYZ, dimBlock2d, d.xb_tmp, p);
-			cudaDeviceSynchronize();
+            cudaDeviceSynchronize();
 
             errCuda = cudaMemcpy(d.xb, d.xb_tmp, 3*(p.nx+2)*(p.ny+2)*(p.nz+2)*sizeof(*(d.xb)), cudaMemcpyDeviceToDevice);
             if (cudaSuccess != errCuda) { printf("error: could not copy 'xb' within the device during RK step, "
-            		"error = %s\n", cudaGetErrorString(errCuda)); exit(EXIT_FAILURE); }
+                    "error = %s\n", cudaGetErrorString(errCuda)); exit(EXIT_FAILURE); }
             if (p.inertia == true) {
-				errCuda = cudaMemcpy(d.uu, d.uu_tmp, 3*p.nx*p.ny*p.nz*sizeof(*(d.uu)), cudaMemcpyDeviceToDevice);
-				if (cudaSuccess != errCuda) { printf("error: could not copy 'uu' within the device during RK step, "
-						"error = %s\n", cudaGetErrorString(errCuda)); exit(EXIT_FAILURE); }
+                errCuda = cudaMemcpy(d.uu, d.uu_tmp, 3*p.nx*p.ny*p.nz*sizeof(*(d.uu)), cudaMemcpyDeviceToDevice);
+                if (cudaSuccess != errCuda) { printf("error: could not copy 'uu' within the device during RK step, "
+                        "error = %s\n", cudaGetErrorString(errCuda)); exit(EXIT_FAILURE); }
             }
             cudaDeviceSynchronize();
         }
@@ -269,9 +269,9 @@ int main(int argc, char* argv[])
            (d, blockSize[0]+2, blockSize[1]+2, blockSize[2]+2);
         cudaDeviceSynchronize();
         setGridPeri(dimGrid2dPlusXY, dimGrid2dPlusXZ, dimGrid2dPlusYZ, dimBlock2d, d.xb_new, p);
-		cudaDeviceSynchronize();
+        cudaDeviceSynchronize();
 
-		// miximum error in the domain
+        // maximum error in the domain
         maxDelta = findDevMax(d.maxDelta, gridSize[0]*gridSize[1]*gridSize[2]);
 
         if (maxDelta < p.maxError) {
@@ -279,8 +279,8 @@ int main(int argc, char* argv[])
             errCuda = cudaMemcpy(d.xb, d.xb_new, 3*(p.nx+2)*(p.ny+2)*(p.nz+2)*sizeof(*(d.xb)), cudaMemcpyDeviceToDevice);
             if (cudaSuccess != errCuda) { printf("error: could not copy 'xb' within the device\n"); exit(EXIT_FAILURE); }
             if (p.inertia == true) {
-				errCuda = cudaMemcpy(d.uu, d.uu_new, 3*p.nx*p.ny*p.nz*sizeof(*(d.uu)), cudaMemcpyDeviceToDevice);
-				if (cudaSuccess != errCuda) { printf("error: could not copy 'uu' within the device\n"); exit(EXIT_FAILURE); }
+                errCuda = cudaMemcpy(d.uu, d.uu_new, 3*p.nx*p.ny*p.nz*sizeof(*(d.uu)), cudaMemcpyDeviceToDevice);
+                if (cudaSuccess != errCuda) { printf("error: could not copy 'uu' within the device\n"); exit(EXIT_FAILURE); }
             }
             cudaDeviceSynchronize();
 
@@ -291,42 +291,42 @@ int main(int argc, char* argv[])
             cudaDeviceSynchronize();
             setBbound(dimGrid2dXY, dimGrid2dXZ, dimGrid2dYZ, dimBlock2d, d);
             setPeri(dimGrid2dPlusXY, dimGrid2dPlusXZ, dimGrid2dPlusYZ, dimBlock2d, d.B, p);
-			cudaDeviceSynchronize();
+            cudaDeviceSynchronize();
 
             current(dimGrid, dimBlock, blockSize, d, p);
             cudaDeviceSynchronize();
 
             // write diagnosis on the screen and into time series file
             if (it % p.nTs == 0) {
-            	reductions(&red, d, p, blockSize, gridSize, dimGrid, dimBlock);
+                reductions(&red, d, p, blockSize, gridSize, dimGrid, dimBlock);
                 writeTs(p, red, t, dt, it, maxDelta);
             }
 
             // adapt the time step
             if (maxDelta > 0)
-            	dt = dt*pow(0.9*p.maxError/maxDelta, REAL(0.2));
+                dt = dt*pow(0.9*p.maxError/maxDelta, REAL(0.2));
 
             // write out the state file
             if ((ceil((t-dt)/p.dtDump) != ceil(t/p.dtDump)) || (ceil((t-dt)/p.dtSave) != ceil(t/p.dtSave))
-            		|| (it == (p.nCycle-1))) {
-            	prepareDump(red, h, d, p, blockSize, gridSize, dimGrid, dimBlock,
-            			dimGrid2dPlusXY, dimGrid2dPlusXZ, dimGrid2dPlusYZ, dimBlock2d);
-            	if (ceil((t-dt)/p.dtDump) != ceil(t/p.dtDump))
-            		dumpState(h, p, t, dt, ceil((t-dt)/p.dtDump));
-            	if ((ceil((t-dt)/p.dtSave) != ceil(t/p.dtSave)) || (it == (p.nCycle-1)))
-            		dumpState(h, p, t, dt, -1);
+                    || (it == (p.nCycle-1))) {
+                prepareDump(red, h, d, p, blockSize, gridSize, dimGrid, dimBlock,
+                        dimGrid2dPlusXY, dimGrid2dPlusXZ, dimGrid2dPlusYZ, dimBlock2d);
+                if (ceil((t-dt)/p.dtDump) != ceil(t/p.dtDump))
+                    dumpState(h, p, t, dt, ceil((t-dt)/p.dtDump));
+                if ((ceil((t-dt)/p.dtSave) != ceil(t/p.dtSave)) || (it == (p.nCycle-1)))
+                    dumpState(h, p, t, dt, -1);
             }
         }
         else {
-			it -= 1;
-			// adapt the time step
-			if (maxDelta > 0)
-				dt = dt*pow(0.9*p.maxError/maxDelta, REAL(0.2));
+            it -= 1;
+            // adapt the time step
+            if (maxDelta > 0)
+                dt = dt*pow(0.9*p.maxError/maxDelta, REAL(0.2));
         }
     }
 
     if (dt < p.dtMin)
-    	printf("dt < dtMin = %e, stopping simulation\n", p.dtMin);
+        printf("dt < dtMin = %e, stopping simulation\n", p.dtMin);
 
     freeMemory(&h, &d, p);
 

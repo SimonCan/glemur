@@ -91,29 +91,29 @@ REAL floatSwap(REAL value) {
 
     union  v val;
     UINT   temp;
-	#if (PRECISION == 64)
-    	unsigned int left, right;
-	#endif
+    #if (PRECISION == 64)
+        unsigned int left, right;
+    #endif
 
-	if (endian == LITTLE_ENDIAN) {
-		val.f = value;
-		#if (PRECISION == 32)
-			val.i  = htonl(val.i);
-		#endif
-		#if (PRECISION == 64)
-			right = (unsigned int) val.i;
-			val.i = val.i >> 32;
-			left  = (unsigned int) val.i;
-			left  = htonl(left);
-			right = htonl(right);
-			val.i = right;
-			val.i = val.i << 32;
-			val.i = val.i | (UINT) left;
-		#endif
-		return *(REAL*)&val.i;
-	}
-	else
-		return value;
+    if (endian == LITTLE_ENDIAN) {
+        val.f = value;
+        #if (PRECISION == 32)
+            val.i  = htonl(val.i);
+        #endif
+        #if (PRECISION == 64)
+            right = (unsigned int) val.i;
+            val.i = val.i >> 32;
+            left  = (unsigned int) val.i;
+            left  = htonl(left);
+            right = htonl(right);
+            val.i = right;
+            val.i = val.i << 32;
+            val.i = val.i | (UINT) left;
+        #endif
+        return *(REAL*)&val.i;
+    }
+    else
+        return value;
 }
 
 
@@ -173,7 +173,7 @@ int readState(struct varsHost_t h, struct parameters_t p, REAL *t, REAL *dt)
     char    *pos;        // position in a string
     int     numParams;   // number of fields with parameters
     int     i, j, k, l;
-    REAL    legacy;	 	 // for backwards compatibility with older files
+    REAL    legacy;          // for backwards compatibility with older files
 
     fd = fopen("data/save.vtk", "r");
     if (fd == NULL) {
@@ -241,18 +241,18 @@ int readState(struct varsHost_t h, struct parameters_t p, REAL *t, REAL *dt)
 
     // read the velocity field. need to jump over B-field first
     if (p.inertia == true) {
-    	REAL* uu_tmp;
-    	uu_tmp = (REAL *)malloc(3*(p.nx+2)*(p.ny+2)*(p.nz+2)*sizeof(*(uu_tmp)));
+        REAL* uu_tmp;
+        uu_tmp = (REAL *)malloc(3*(p.nx+2)*(p.ny+2)*(p.nz+2)*sizeof(*(uu_tmp)));
         if (uu_tmp == NULL) { printf("error: could not allocate memory for uu_tmp\n"); return -1; }
         fgets(line, sizeof(line), fd);
-		fread(uu_tmp, sizeof(REAL), 3*(p.nx+2)*(p.ny+2)*(p.nz+2), fd);	// jump over B
-		fgets(line, sizeof(line), fd);
-		fread(uu_tmp, sizeof(REAL), 3*(p.nx+2)*(p.ny+2)*(p.nz+2), fd);
-	    for (k = 0; k < p.nz; k++)
-	        for (j = 0; j < p.ny; j++)
-	            for (i = 0; i < p.nx; i++)
-	            	for (l = 0; l < 3; l++)
-	            		h.uu[l + 3*i + 3*p.nx*j + 3*p.nx*p.ny*k] = floatSwap(uu_tmp[l + 3*(i+1) + 3*(p.nx+2)*(j+1) + 3*(p.nx+2)*(p.ny+2)*(k+1)]);
+        fread(uu_tmp, sizeof(REAL), 3*(p.nx+2)*(p.ny+2)*(p.nz+2), fd);    // jump over B
+        fgets(line, sizeof(line), fd);
+        fread(uu_tmp, sizeof(REAL), 3*(p.nx+2)*(p.ny+2)*(p.nz+2), fd);
+        for (k = 0; k < p.nz; k++)
+            for (j = 0; j < p.ny; j++)
+                for (i = 0; i < p.nx; i++)
+                    for (l = 0; l < 3; l++)
+                        h.uu[l + 3*i + 3*p.nx*j + 3*p.nx*p.ny*k] = floatSwap(uu_tmp[l + 3*(i+1) + 3*(p.nx+2)*(j+1) + 3*(p.nx+2)*(p.ny+2)*(k+1)]);
     }
 
     fclose(fd);
@@ -324,7 +324,7 @@ int dumpState(struct varsHost_t h, struct parameters_t p, REAL t, REAL dt, int n
     FILE    *fd;
     int     i, j, k;
     REAL    swapped[1]; // needed to swap byte order to big endian
-    char	fileName[20];
+    char    fileName[20];
 
     if (n == -1)
         sprintf(fileName, "data/save.vtk");
@@ -381,10 +381,10 @@ int dumpState(struct varsHost_t h, struct parameters_t p, REAL t, REAL dt, int n
 
     // write velocity field uu
     if (p.inertia == 1) {
-		fprintf(fd, "VECTORS ufield %s\n", REAL_STR);
-		for (k = 0; k < p.nz+2; k++) {
-			for (j = 0; j < p.ny+2; j++) {
-				for (i = 0; i < p.nx+2; i++) {
+        fprintf(fd, "VECTORS ufield %s\n", REAL_STR);
+        for (k = 0; k < p.nz+2; k++) {
+            for (j = 0; j < p.ny+2; j++) {
+                for (i = 0; i < p.nx+2; i++) {
                     if ((i == 0) || (i == p.nx+1) || (j == 0) || (j == p.ny+1) || (k == 0) || (k == p.nz+1)) {
                         swapped[0] = 0.;
                         fwrite(swapped, sizeof(REAL), 1, fd);
@@ -392,19 +392,19 @@ int dumpState(struct varsHost_t h, struct parameters_t p, REAL t, REAL dt, int n
                         fwrite(swapped, sizeof(REAL), 1, fd);
                     }
                     else {
-						swapped[0] = floatSwap(h.uu[0 + (i-1)*3 + (j-1)*p.nx*3 + (k-1)*p.nx*p.ny*3]);
-						fwrite(swapped, sizeof(REAL), 1, fd);
-						swapped[0] = floatSwap(h.uu[1 + (i-1)*3 + (j-1)*p.nx*3 + (k-1)*p.nx*p.ny*3]);
-						fwrite(swapped, sizeof(REAL), 1, fd);
-						swapped[0] = floatSwap(h.uu[2 + (i-1)*3 + (j-1)*p.nx*3 + (k-1)*p.nx*p.ny*3]);
-						fwrite(swapped, sizeof(REAL), 1, fd);
+                        swapped[0] = floatSwap(h.uu[0 + (i-1)*3 + (j-1)*p.nx*3 + (k-1)*p.nx*p.ny*3]);
+                        fwrite(swapped, sizeof(REAL), 1, fd);
+                        swapped[0] = floatSwap(h.uu[1 + (i-1)*3 + (j-1)*p.nx*3 + (k-1)*p.nx*p.ny*3]);
+                        fwrite(swapped, sizeof(REAL), 1, fd);
+                        swapped[0] = floatSwap(h.uu[2 + (i-1)*3 + (j-1)*p.nx*3 + (k-1)*p.nx*p.ny*3]);
+                        fwrite(swapped, sizeof(REAL), 1, fd);
                     }
-				}
-			}
-		}
+                }
+            }
+        }
     }
 
-	// write electric current density J
+    // write electric current density J
     if (p.dumpJ == 1) {
         fprintf(fd, "VECTORS jfield %s\n", REAL_STR);
         for (k = 0; k < p.nz+2; k++) {
@@ -429,7 +429,7 @@ int dumpState(struct varsHost_t h, struct parameters_t p, REAL t, REAL dt, int n
         }
     }
 
-	// write the determinant of the Jacobian matrix
+    // write the determinant of the Jacobian matrix
     if (p.dumpDetJac == 1) {
         fprintf(fd, "SCALARS detJac %s\n", REAL_STR);
         fprintf(fd, "LOOKUP_TABLE default\n");
@@ -443,51 +443,51 @@ int dumpState(struct varsHost_t h, struct parameters_t p, REAL t, REAL dt, int n
         }
     }
 
-	// write the directional cell volume
+    // write the directional cell volume
     if (p.dumpCellVol == 1) {
         fprintf(fd, "SCALARS cellVol %s\n", REAL_STR);
         fprintf(fd, "LOOKUP_TABLE default\n");
         for (k = 0; k < p.nz+2; k++) {
             for (j = 0; j < p.ny+2; j++) {
                 for (i = 0; i < p.nx+2; i++) {
-                	if ((i*j*k == 0) || (i == p.nx+1) || (j == p.ny+1) || (k == p.nz+1))
-                		swapped[0] = floatSwap(0);
-                	else
-                		swapped[0] = floatSwap(h.cellVol[(i-1) + (j-1)*p.nx + (k-1)*p.nx*p.ny]);
+                    if ((i*j*k == 0) || (i == p.nx+1) || (j == p.ny+1) || (k == p.nz+1))
+                        swapped[0] = floatSwap(0);
+                    else
+                        swapped[0] = floatSwap(h.cellVol[(i-1) + (j-1)*p.nx + (k-1)*p.nx*p.ny]);
                     fwrite(swapped, sizeof(REAL), 1, fd);
                 }
             }
         }
     }
 
-	// write the convexity of the cells around the grid point
+    // write the convexity of the cells around the grid point
     if (p.dumpConvexity == 1) {
         fprintf(fd, "SCALARS convexity %s\n", REAL_STR);
         fprintf(fd, "LOOKUP_TABLE default\n");
         for (k = 0; k < p.nz+2; k++) {
             for (j = 0; j < p.ny+2; j++) {
                 for (i = 0; i < p.nx+2; i++) {
-                	if ((i*j*k == 0) || (i == p.nx+1) || (j == p.ny+1) || (k == p.nz+1))
-                		swapped[0] = floatSwap(0);
-                	else
-                		swapped[0] = floatSwap(h.convexity[(i-1) + (j-1)*p.nx + (k-1)*p.nx*p.ny]);
+                    if ((i*j*k == 0) || (i == p.nx+1) || (j == p.ny+1) || (k == p.nz+1))
+                        swapped[0] = floatSwap(0);
+                    else
+                        swapped[0] = floatSwap(h.convexity[(i-1) + (j-1)*p.nx + (k-1)*p.nx*p.ny]);
                     fwrite(swapped, sizeof(REAL), 1, fd);
                 }
             }
         }
     }
 
-	// write the minimum of the wedge products
+    // write the minimum of the wedge products
     if (p.dumpWedgeMin == 1) {
         fprintf(fd, "SCALARS wedgeMin %s\n", REAL_STR);
         fprintf(fd, "LOOKUP_TABLE default\n");
         for (k = 0; k < p.nz+2; k++) {
             for (j = 0; j < p.ny+2; j++) {
                 for (i = 0; i < p.nx+2; i++) {
-                	if ((i*j*k == 0) || (i == p.nx+1) || (j == p.ny+1) || (k == p.nz+1))
-                		swapped[0] = floatSwap(0);
-                	else
-                		swapped[0] = floatSwap(h.wedgeMin[(i-1) + (j-1)*p.nx + (k-1)*p.nx*p.ny]);
+                    if ((i*j*k == 0) || (i == p.nx+1) || (j == p.ny+1) || (k == p.nz+1))
+                        swapped[0] = floatSwap(0);
+                    else
+                        swapped[0] = floatSwap(h.wedgeMin[(i-1) + (j-1)*p.nx + (k-1)*p.nx*p.ny]);
                     fwrite(swapped, sizeof(REAL), 1, fd);
                 }
             }
@@ -603,7 +603,7 @@ int writeTs(struct parameters_t p, struct red_t red, REAL t, REAL dt, int it, RE
         if ((p.redU2 == true) && (p.inertia == true))
             fprintf(fd, "%13s", "U2");
         if ((p.redUMax == true) && (p.inertia == true))
-        	fprintf(fd, "%13s", "UMax");
+            fprintf(fd, "%13s", "UMax");
         fprintf(fd, "\n");
 
         fclose(fd);
@@ -654,7 +654,7 @@ int writeTs(struct parameters_t p, struct red_t red, REAL t, REAL dt, int it, RE
         if (p.redEpsilonStar == true)
             fprintf(fd, "%12.5e ", red.epsilonStar);
         if (p.redErrB_1ez == true)
-        	fprintf(fd, "%12.5e ", red.errB_1ez);
+            fprintf(fd, "%12.5e ", red.errB_1ez);
         if (p.redErrXb_XbAn == true)
             fprintf(fd, "%12.5e ", red.errXb_XbAn);
         if (p.redB2 == true)
@@ -668,7 +668,7 @@ int writeTs(struct parameters_t p, struct red_t red, REAL t, REAL dt, int it, RE
         if ((p.redU2 == true) && (p.inertia == true))
             fprintf(fd, "%12.5e ", red.U2);
         if ((p.redUMax == true) && (p.inertia == true))
-        	fprintf(fd, "%12.5e ", red.UMax);
+            fprintf(fd, "%12.5e ", red.UMax);
         fprintf(fd, "\n");
 
         fclose(fd);
