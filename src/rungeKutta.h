@@ -5,16 +5,19 @@
 
 #include "global.h"
 
-// compute B = J.B0/Delta, first step in time stepping
-__global__ void B_JacB0(struct varsDev_t d, int dimX, int dimY, int dimZ);
+// Assign values to the coefficients for the adaptive time step Runge-Kutta.
+void assignCoefficients(REAL a[5], REAL b[7][6], REAL c[6], REAL cs[6]);
 
-// compute k_n (kk)
-__global__ void kk(struct varsDev_t d, int dimX, int dimY, int dimZ, int n, REAL dt);
+// Compute B = J.B0/Delta, first step in time stepping.
+__global__ void B_JacB0(struct VarsDev d, int dimX, int dimY, int dimZ);
 
-// compute the new distorted grid
-__global__ void xNewStar(struct varsDev_t d, int dimX, int dimY, int dimZ);
+// Compute k_n (kk).
+__global__ void kk(struct VarsDev d, int dimX, int dimY, int dimZ, int n, REAL dt);
 
-// compute the averaged Lorentz force
-__device__ void jxbAver(struct varsDev_t d, REAL *Js, REAL *Bs, REAL *xbs, REAL jxb[6][3], int i, int j, int k, int p, int q, int r);
+// Compute the new distorted grid.
+__global__ void xNewStar(struct VarsDev d, int dimX, int dimY, int dimZ);
+
+// Compute the averaged Lorentz force.
+__device__ void jxbAver(struct VarsDev d, REAL *Js, REAL *Bs, REAL *xbs, REAL jxb[6][3], int i, int j, int k, int p, int q, int r);
 
 #endif /* RUNGEKUTTA_H_ */

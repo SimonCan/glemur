@@ -6,7 +6,7 @@
 #include "global.h"
 #include "io.h"
 
-// store the information about the CUDA devices in 'cuda.info'
+// Store the information about the CUDA devices in 'cuda.info'.
 int writeCudaInfo(int deviceCount, long int activeDevice)
 {
     FILE                    *fd;
@@ -44,7 +44,7 @@ int writeCudaInfo(int deviceCount, long int activeDevice)
         fprintf(fd, "max blocks per grid in x        %d\n",  devProp.maxGridSize[0]);
         fprintf(fd, "max blocks per grid in y        %d\n",  devProp.maxGridSize[1]);
         fprintf(fd, "max blocks per grid in z        %d\n",  devProp.maxGridSize[2]);
-        fprintf(fd, "clock rate [kHz]                %d\n", devProp.clockRate); //
+        fprintf(fd, "clock rate [kHz]                %d\n",  devProp.clockRate); //
         fprintf(fd, "constant memory [bytes]         %lu\n", devProp.totalConstMem);
         fprintf(fd, "compute capability major        %d\n",  devProp.major);
         fprintf(fd, "compute capability minor        %d\n",  devProp.minor);
@@ -82,7 +82,7 @@ int writeCudaInfo(int deviceCount, long int activeDevice)
 }
 
 
-// swap byte order for the correct endianess
+// Swap byte order for the correct endianess.
 REAL floatSwap(REAL value) {
     union v {
         REAL  f;
@@ -90,7 +90,6 @@ REAL floatSwap(REAL value) {
     };
 
     union  v val;
-    UINT   temp;
     #if (PRECISION == 64)
         unsigned int left, right;
     #endif
@@ -117,7 +116,7 @@ REAL floatSwap(REAL value) {
 }
 
 
-// swap byte order for the correct endianess
+// Swap byte order for the correct endianess.
 int intSwap(int value){
     union v {
         int             f;
@@ -137,8 +136,8 @@ int intSwap(int value){
 }
 
 
-// read the number of grid points from the last snapshot
-int readGrid(struct parameters_t p)
+// Eead the number of grid points from the last snapshot.
+int readGrid(struct Parameters p)
 {
     FILE *  fd;
     char    line[256];   // text line in the save file
@@ -151,7 +150,7 @@ int readGrid(struct parameters_t p)
         exit(EXIT_FAILURE);
     }
 
-    // jump over the header
+    // Jump over the header.
     for (i = 0; i < 5; i++)
         fgets(line, sizeof(line), fd);
 
@@ -164,8 +163,8 @@ int readGrid(struct parameters_t p)
 }
 
 
-// read the state and the parameters from the latest dump file
-int readState(struct varsHost_t h, struct parameters_t p, REAL *t, REAL *dt)
+// Read the state and the parameters from the latest dump file.
+int readState(struct VarsHost h, struct Parameters p, REAL *t, REAL *dt)
 {
     FILE *  fd;
     char    line[256];   // text line in the save file
@@ -173,7 +172,7 @@ int readState(struct varsHost_t h, struct parameters_t p, REAL *t, REAL *dt)
     char    *pos;        // position in a string
     int     numParams;   // number of fields with parameters
     int     i, j, k, l;
-    REAL    legacy;          // for backwards compatibility with older files
+    REAL    legacy;      // for backwards compatibility with older files
 
     fd = fopen("data/save.vtk", "r");
     if (fd == NULL) {
@@ -181,14 +180,15 @@ int readState(struct varsHost_t h, struct parameters_t p, REAL *t, REAL *dt)
         exit(EXIT_FAILURE);
     }
 
-    // jump over the header
+    // Jump over the header.
     for (i = 0; i < 5; i++)
         fgets(line, sizeof(line), fd);
 
-    // read how many fields there are
+    // Read how many fields there are.
     fgets(line, sizeof(line), fd); strncpy(tmp, line+17, 2);
     numParams = atoi(tmp);
 
+    // Write the parameters into the parameters struct.
     for (i = 0; i < numParams; i++) {
         fgets(line, sizeof(line), fd);
         pos = strstr(line, " ");
@@ -233,13 +233,13 @@ int readState(struct varsHost_t h, struct parameters_t p, REAL *t, REAL *dt)
         }
     }
 
-    // read the grid data
+    // Read the grid data.
     fgets(line, sizeof(line), fd);
     fread(h.xb, sizeof(REAL), 3*(p.nx+2)*(p.ny+2)*(p.nz+2), fd);
     for (i = 0; i < 3*(p.nx+2)*(p.ny+2)*(p.nz+2); i++)
         h.xb[i] = floatSwap(h.xb[i]);
 
-    // read the velocity field. need to jump over B-field first
+    // Read the velocity field. need to jump over B-field first.
     if (p.inertia == true) {
         REAL* uu_tmp;
         uu_tmp = (REAL *)malloc(3*(p.nx+2)*(p.ny+2)*(p.nz+2)*sizeof(*(uu_tmp)));
@@ -257,7 +257,7 @@ int readState(struct varsHost_t h, struct parameters_t p, REAL *t, REAL *dt)
 
     fclose(fd);
 
-    // read the initial magnetic field B0
+    // Read the initial magnetic field B0.
     fd = fopen("data/B0.vtk", "r");
     if (fd == NULL) {
         printf("error: could not open file 'data/save.vtk'\n");
@@ -276,8 +276,8 @@ int readState(struct varsHost_t h, struct parameters_t p, REAL *t, REAL *dt)
 }
 
 
-// dump the initial magnetic field
-int writeB0(REAL *B0, struct parameters_t p)
+// Dump the initial magnetic field.
+int writeB0(REAL *B0, struct Parameters p)
 {
     FILE    *fd;
     int     i, j, k;
@@ -289,7 +289,7 @@ int writeB0(REAL *B0, struct parameters_t p)
         exit(EXIT_FAILURE);
     }
 
-    // write common header
+    // Write common header.
     fprintf(fd, "# vtk DataFile Version 2.0\n");
     fprintf(fd, "GLEMuR B0 dump\n");
     fprintf(fd, "BINARY\n");
@@ -318,12 +318,12 @@ int writeB0(REAL *B0, struct parameters_t p)
 }
 
 
-// dump the current state
-int dumpState(struct varsHost_t h, struct parameters_t p, REAL t, REAL dt, int n)
+// Dump the current state.
+int dumpState(struct VarsHost h, struct Parameters p, REAL t, REAL dt, int n)
 {
     FILE    *fd;
     int     i, j, k;
-    REAL    swapped[1]; // needed to swap byte order to big endian
+    REAL    swapped[1];     // needed to swap byte order to big endian
     char    fileName[20];
 
     if (n == -1)
@@ -337,17 +337,17 @@ int dumpState(struct varsHost_t h, struct parameters_t p, REAL t, REAL dt, int n
         exit(EXIT_FAILURE);
     }
 
-    // write common header
+    // Write common header.
     fprintf(fd, "# vtk DataFile Version 2.0\n");
     fprintf(fd, "GLEMuR data dump\n");
     fprintf(fd, "BINARY\n");
     fprintf(fd, "DATASET STRUCTURED_GRID\n");
     fprintf(fd, "DIMENSIONS %9i %9i %9i\n", p.nx+2, p.ny+2, p.nz+2);
 
-    // parameters as meta data
+    // Parameters as meta data.
     writeParams(p, t, dt, fd);
 
-    // write structured grid xb
+    // Write structured grid xb.
     fprintf(fd, "POINTS %9i %s\n", (p.nx+2)*(p.ny+2)*(p.nz+2), REAL_STR);
     for (k = 0; k < p.nz+2; k++) {
         for (j = 0; j < p.ny+2; j++) {
@@ -364,7 +364,7 @@ int dumpState(struct varsHost_t h, struct parameters_t p, REAL t, REAL dt, int n
 
     fprintf(fd, "POINT_DATA %9i\n", (p.nx+2)*(p.ny+2)*(p.nz+2));
 
-    // write magnetic field B
+    // Write magnetic field B.
     fprintf(fd, "VECTORS bfield %s\n", REAL_STR);
     for (k = 0; k < p.nz+2; k++) {
         for (j = 0; j < p.ny+2; j++) {
@@ -379,7 +379,7 @@ int dumpState(struct varsHost_t h, struct parameters_t p, REAL t, REAL dt, int n
         }
     }
 
-    // write velocity field uu
+    // Write velocity field uu.
     if (p.inertia == 1) {
         fprintf(fd, "VECTORS ufield %s\n", REAL_STR);
         for (k = 0; k < p.nz+2; k++) {
@@ -404,7 +404,7 @@ int dumpState(struct varsHost_t h, struct parameters_t p, REAL t, REAL dt, int n
         }
     }
 
-    // write electric current density J
+    // Write electric current density J.
     if (p.dumpJ == 1) {
         fprintf(fd, "VECTORS jfield %s\n", REAL_STR);
         for (k = 0; k < p.nz+2; k++) {
@@ -429,7 +429,7 @@ int dumpState(struct varsHost_t h, struct parameters_t p, REAL t, REAL dt, int n
         }
     }
 
-    // write the determinant of the Jacobian matrix
+    // Write the determinant of the Jacobian matrix.
     if (p.dumpDetJac == 1) {
         fprintf(fd, "SCALARS detJac %s\n", REAL_STR);
         fprintf(fd, "LOOKUP_TABLE default\n");
@@ -443,7 +443,7 @@ int dumpState(struct varsHost_t h, struct parameters_t p, REAL t, REAL dt, int n
         }
     }
 
-    // write the directional cell volume
+    // Write the signed cell volume.
     if (p.dumpCellVol == 1) {
         fprintf(fd, "SCALARS cellVol %s\n", REAL_STR);
         fprintf(fd, "LOOKUP_TABLE default\n");
@@ -460,7 +460,7 @@ int dumpState(struct varsHost_t h, struct parameters_t p, REAL t, REAL dt, int n
         }
     }
 
-    // write the convexity of the cells around the grid point
+    // Write the convexity of the cells around the grid point.
     if (p.dumpConvexity == 1) {
         fprintf(fd, "SCALARS convexity %s\n", REAL_STR);
         fprintf(fd, "LOOKUP_TABLE default\n");
@@ -477,7 +477,7 @@ int dumpState(struct varsHost_t h, struct parameters_t p, REAL t, REAL dt, int n
         }
     }
 
-    // write the minimum of the wedge products
+    // Write the minimum of the wedge products.
     if (p.dumpWedgeMin == 1) {
         fprintf(fd, "SCALARS wedgeMin %s\n", REAL_STR);
         fprintf(fd, "LOOKUP_TABLE default\n");
@@ -499,8 +499,8 @@ int dumpState(struct varsHost_t h, struct parameters_t p, REAL t, REAL dt, int n
 }
 
 
-// writes parameters in the dumping files
-int writeParams(struct parameters_t p, REAL t, REAL dt, FILE *fd)
+// Write parameters in the dumping files.
+int writeParams(struct Parameters p, REAL t, REAL dt, FILE *fd)
 {
     REAL    swappedF[1]; // needed to swap byte order to big endian
     int     swappedI[1]; // needed to swap byte order to big endian
@@ -538,8 +538,8 @@ int writeParams(struct parameters_t p, REAL t, REAL dt, FILE *fd)
 }
 
 
-// write out the time series
-int writeTs(struct parameters_t p, struct red_t red, REAL t, REAL dt, int it, REAL maxDelta)
+// Write out the time series.
+int writeTs(struct Parameters p, struct Reduction red, REAL t, REAL dt, int it, REAL maxDelta)
 {
     FILE  * fd;
 

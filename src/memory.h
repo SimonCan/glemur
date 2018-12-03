@@ -3,10 +3,10 @@
 #ifndef MEMORY_H_
 #define MEMORY_H_
 
-// allocate host and device memory
-int allocateMemory(struct varsHost_t *h, struct varsDev_t *d, struct parameters_t p, int gridSize[3]);
+// Allocate host and device memory.
+int allocateMemory(struct VarsHost *h, struct VarsDev *d, struct Parameters p, int gridSize[3]);
 
-// free host and device memory
-int freeMemory(struct varsHost_t *h, struct varsDev_t *d, struct parameters_t p);
+// Free host and device memory.
+int freeMemory(struct VarsHost *h, struct VarsDev *d, struct Parameters p);
 
 #endif /* MEMORY_H_ */

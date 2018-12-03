@@ -8,9 +8,9 @@
 #include "boundaries.h"
 #include "io.h"
 
-// do some reduction
-int reductions(struct red_t *red, struct varsDev_t d, struct parameters_t p, int blockSize[3], int gridSize[3], dim3 dimGrid, dim3 dimBlock) {
-    cudaError_t         errCuda;          // error returned by device functions
+// Perform data reduction.
+int reductions(struct Reduction *red, struct VarsDev d, struct Parameters p, int blockSize[3], int gridSize[3], dim3 dimGrid, dim3 dimBlock) {
+    cudaError_t	errCuda;	// error returned by device functions
 
     if (p.redJMax == true) {
         errCuda = cudaMalloc((void**)&(d.Jmag), p.nx*p.ny*p.nz*sizeof(*(d.Jmag)));
@@ -88,7 +88,7 @@ int reductions(struct red_t *red, struct varsDev_t d, struct parameters_t p, int
                                    blockSize[0]*blockSize[1]*blockSize[2])*sizeof(*(d.xb))>>>
             (d.xb, d.convexity, blockSize[0]+2, blockSize[1]+2, blockSize[2]+2);
         cudaDeviceSynchronize();
-        // find the minimum
+        // Find the minimum.
         invert<<<int(p.nx*p.ny*p.nz-1)/256+1, 256>>>(d.convexity, int(p.nx*p.ny*p.nz));
         cudaDeviceSynchronize();
         red->convex = -findDevMax(d.convexity, p.nx*p.ny*p.nz);
@@ -103,7 +103,7 @@ int reductions(struct red_t *red, struct varsDev_t d, struct parameters_t p, int
             <<<dimGrid, dimBlock, 3*(blockSize[0]+2)*(blockSize[1]+2)*(blockSize[2]+2)*sizeof(*(d.xb))>>>
                 (d.xb, d.wedgeMin, blockSize[0]+2, blockSize[1]+2, blockSize[2]+2);
         cudaDeviceSynchronize();
-        // find the minimum
+        // Find the minimum.
         invert<<<int(p.nx*p.ny*p.nz-1)/256+1, 256>>>(d.wedgeMin, int(p.nx*p.ny*p.nz));
         cudaDeviceSynchronize();
         red->wedgeMin = -findDevMax(d.wedgeMin, p.nx*p.ny*p.nz);
@@ -134,8 +134,8 @@ int reductions(struct red_t *red, struct varsDev_t d, struct parameters_t p, int
 }
 
 
-// prepare the dump from the current state
-int prepareDump(struct red_t red, struct varsHost_t h, struct varsDev_t d, struct parameters_t p, int blockSize[3], int gridSize[3], dim3 dimGrid, dim3 dimBlock,
+// Prepare the dump from the current state.
+int prepareDump(struct Reduction red, struct VarsHost h, struct VarsDev d, struct Parameters p, int blockSize[3], int gridSize[3], dim3 dimGrid, dim3 dimBlock,
         dim3 dimGrid2dPlusXY, dim3 dimGrid2dPlusXZ, dim3 dimGrid2dPlusYZ, dim3 dimBlock2d) {
     cudaError_t         errCuda;          // error returned by device functions
 
@@ -150,7 +150,7 @@ int prepareDump(struct red_t red, struct varsHost_t h, struct varsDev_t d, struc
     if (cudaSuccess != errCuda) { printf("error: could not copy 'JJ' to the host\n"); exit(EXIT_FAILURE); }
     errCuda = cudaMemcpy(h.detJac, d.detJac, (p.nx+2)*(p.ny+2)*(p.nz+2)*sizeof(*(h.detJac)), cudaMemcpyDeviceToHost);
     if (cudaSuccess != errCuda) { printf("error: could not copy 'detJac' to the host\n"); exit(EXIT_FAILURE); }
-    // compute the directional cell volume
+    // Compute the sigend cell volume.
     if (p.dumpCellVol == true) {
         errCuda = cudaMalloc((void**)&(d.cellVol), p.nx*p.ny*p.nz*sizeof(*(d.cellVol)));
         if (cudaSuccess != errCuda) { printf("error: could not allocate device memory for d.cellVol\n"); exit(EXIT_FAILURE); }

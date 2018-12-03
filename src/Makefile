@@ -1,4 +1,4 @@
-# Makefile for main.cu
+# Makefile for glemur
 
 EXEC = glemur
 TMP = tmp.o
@@ -14,7 +14,7 @@ OPT = -rdc=true -m64 -arch sm_30 -L$(LIB_PATH) -lcuda -lcudart -dc -lm
 all: $(EXEC)
 
 $(EXEC): $(OBJ)
-	$(FC) -o $(EXEC) $(OBJ) -L$(LIB_PATH) -lcuda -lcudart -lstdc++
+	$(FC) -v -o $(EXEC) $(OBJ) -L$(LIB_PATH) -lcuda -lcudart -lstdc++
 	rm $(TMP)
 
 tmp.o: $(OBJ_CU)

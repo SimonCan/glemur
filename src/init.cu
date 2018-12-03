@@ -8,10 +8,10 @@
 #include "blobsDomes.h"
 
 
-// set the residual magnetic energy for the corresponding configurations
-int initResiduals(struct parameters_t p, struct red_t *red)
+// Set the residual magnetic energy for the corresponding configurations.
+void initResiduals(struct Parameters p, struct Reduction *red)
 {
-    // residual magnetic energy
+    // Residual magnetic energy.
     if (strncmp(p.bInit, "Pontin09 ", 9) == 0)
         red->B2res = 1*p.Lx*p.Ly*p.Lz*p.ampl;
     if (strncmp(p.bInit, "analytic ", 9) == 0)
@@ -25,8 +25,8 @@ int initResiduals(struct parameters_t p, struct red_t *red)
 }
 
 
-// create the initial magnetic field B0, the initial grid xb and initial velocity (if needed)
-int initState(struct varsHost_t h, struct parameters_t p, struct red_t *red)
+// Create the initial magnetic field B0, the initial grid xb and initial velocity (if needed).
+int initState(struct VarsHost h, struct Parameters p, struct Reduction *red)
 {
     int  i, j, k, l, b;
     REAL x[p.nx+2], y[p.ny+2], z[p.nz+2];
@@ -43,7 +43,7 @@ int initState(struct varsHost_t h, struct parameters_t p, struct red_t *red)
     if (strncmp(p.bInit, "blobsDomes2 ", 12) == 0)
         initBlobsDomes2(h, p);
 
-    // include the boundaries
+    // Include the boundaries.
     for (k = 0; k < p.nz+2; k++) {
         z[k] = p.dz*(k-1) + p.Oz;
         for (j = 0; j < p.ny+2; j++) {
@@ -52,7 +52,7 @@ int initState(struct varsHost_t h, struct parameters_t p, struct red_t *red)
                 x[i] = p.dx*(i-1) + p.Ox;
                 // from [1]
                 if (strncmp(p.bInit, "Pontin09 ", 9) == 0) {
-                    // field used by Pontin (2009)
+                    // Field used by Pontin (2009).
                     h.B0[0 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] =
                         -2*p.ampl/(PI*p.ar) * y[j] *
                         (p.phi1*exp(-(x[i]*x[i]+y[j]*y[j])/(p.ar*p.ar)-(z[k]-p.L1)*(z[k]-p.L1)/(p.az*p.az)) +
@@ -64,9 +64,9 @@ int initState(struct varsHost_t h, struct parameters_t p, struct red_t *red)
                     h.B0[2 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = p.ampl;
                 }
 
-                // field for which we know the relaxed state analytically
+                // Field for which we know the relaxed state analytically.
                 if (strncmp(p.bInit, "analytic ", 9) == 0) {
-                    // field used for testing
+                    // Field used for testing.
                     h.B0[0 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] =
                         2*p.ampl*z[k]*exp(-(x[i]*x[i]+y[j]*y[j])/(p.ar*p.ar)-z[k]*z[k]/(p.az*p.az))*p.phi1/(p.az*p.az)*y[j];
                     h.B0[1 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] =
@@ -74,9 +74,9 @@ int initState(struct varsHost_t h, struct parameters_t p, struct red_t *red)
                     h.B0[2 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = p.ampl;
                 }
 
-                // field for which we know the relaxed state analytically extending in X
+                // Field for which we know the relaxed state analytically extending in X.
                 if (strncmp(p.bInit, "analyticX ", 10) == 0) {
-                    // field used for testing
+                    // Field used for testing.
                     h.B0[0 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = p.ampl;
                     h.B0[1 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] =
                         -2*p.ampl*x[i]*exp(-(z[k]*z[k]+y[j]*y[j])/(p.ar*p.ar)-x[i]*x[i]/(p.az*p.az))*p.phi1/(p.az*p.az)*z[k];
@@ -84,9 +84,9 @@ int initState(struct varsHost_t h, struct parameters_t p, struct red_t *red)
                         2*p.ampl*x[i]*exp(-(z[k]*z[k]+y[j]*y[j])/(p.ar*p.ar)-x[i]*x[i]/(p.az*p.az))*p.phi1/(p.az*p.az)*y[j];
                 }
 
-                // field for which we know the relaxed state analytically extending in Y
+                // Field for which we know the relaxed state analytically extending in Y.
                 if (strncmp(p.bInit, "analyticY ", 10) == 0) {
-                    // field used for testing
+                    // Field used for testing.
                     h.B0[0 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] =
                         2*p.ampl*y[j]*exp(-(x[i]*x[i]+z[k]*z[k])/(p.ar*p.ar)-y[j]*y[j]/(p.az*p.az))*p.phi1/(p.az*p.az)*z[k];
                     h.B0[1 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = p.ampl;
@@ -94,7 +94,7 @@ int initState(struct varsHost_t h, struct parameters_t p, struct red_t *red)
                         -2*p.ampl*y[j]*exp(-(x[i]*x[i]+z[k]*z[k])/(p.ar*p.ar)-y[j]*y[j]/(p.az*p.az))*p.phi1/(p.az*p.az)*x[i];
                 }
 
-                // homogeneous magnetic field in z-direction
+                // Homogeneous magnetic field in z-direction.
                 if (strncmp(p.bInit, "homZ ", 5) == 0) {
                     // homogeneous magnetic field
                     h.B0[0 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = 0.;
@@ -102,9 +102,8 @@ int initState(struct varsHost_t h, struct parameters_t p, struct red_t *red)
                     h.B0[2 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = p.ampl;
                 }
 
-                // blob configuration, like e1, e2 and e3 from Wilmot-Smith ApJ, 696:1339 (2009)
+                // Blob configuration, like e1, e2 and e3 from Wilmot-Smith ApJ, 696:1339 (2009).
                 if (strncmp(p.bInit, "blobs ", 6) == 0) {
-                    // field using blobs, like e1, e2 and e3
                     h.B0[0 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = 0.;
                     h.B0[1 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = 0.;
                     h.B0[2 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = 0.;
@@ -121,21 +120,21 @@ int initState(struct varsHost_t h, struct parameters_t p, struct red_t *red)
                     h.B0[2 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = p.ampl;
                 }
 
-                // field for the shearing experiments
+                // Field for the shearing experiments.
                 if (strncmp(p.bInit, "sheared ", 8) == 0) {
                     h.B0[0 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = 0.;
                     h.B0[1 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = p.ampl*sin(p.initShearK*2*PI*(x[i]-p.Ox)/p.Lx)*0.5;
                     h.B0[2 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = p.ampl*(1+0.25*pow(cos(p.initShearK*2*PI*(x[i]-p.Ox)/p.Lx),2));
                 }
 
-                // field for null fan configuration from Phys. of Plasm. 12, 072112 (2005)
+                // Field for null fan configuration from Phys. of Plasm. 12, 072112 (2005).
                 if (strncmp(p.bInit, "nullFan ", 8) == 0) {
                     h.B0[0 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = p.ampl*x[i]/2;
                     h.B0[1 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = p.ampl*(y[j]/2-p.pert*z[k]);
                     h.B0[2 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = -p.ampl*z[k];
                 }
 
-                // field for from ApJ 756:7 (6pp), 2012
+                // Field for from ApJ 756:7 (6pp), 2012.
                 if (strncmp(p.bInit, "fanSeparatrix ", 14) == 0) {
                     tmp = -0.6/sqrt(pow(x[i]*x[i] + pow(y[j]-0.02,2) + pow(z[k]+1.4,2),3));
                     h.B0[0 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = p.ampl*x[i]*tmp;
@@ -143,7 +142,7 @@ int initState(struct varsHost_t h, struct parameters_t p, struct red_t *red)
                     h.B0[2 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = p.ampl*(1+tmp*(z[k]+1.4));
                 }
 
-                // twisted tube
+                // Twisted tube.
                 if (strncmp(p.bInit, "twisted ", 8) == 0) {
 //                    tmp = exp(-(pow(x[i]-p.pert*exp(-pow(z[k],2)/(p.az*p.az)),2)+pow(y[j],2))/(p.ar*p.ar));
                     tmp = exp(-(pow(x[i],2)+pow(y[j],2))/(p.ar*p.ar));
@@ -152,7 +151,7 @@ int initState(struct varsHost_t h, struct parameters_t p, struct red_t *red)
                     h.B0[2 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = p.ampl;
                 }
 
-                // twisted tubes suggested by G. Hornig 2015
+                // Twisted tubes suggested by G. Hornig 2015.
                 if (strncmp(p.bInit, "tubeSetA ", 9) == 0) {
                     r = sqrt(pow(x[i], 2) + pow(y[j], 2));
                     if (r > p.ar) {
@@ -197,7 +196,7 @@ int initState(struct varsHost_t h, struct parameters_t p, struct red_t *red)
                     }
                 }
 
-                // Hopf field as described in Smiet (2015) and
+                // Hopf field as described in Smiet (2015) 10.1103/PhysRevLett.115.095001.
                 if (strncmp(p.bInit, "hopf ", 5) == 0) {
                     tmp = 4*p.ampl*pow(p.ar,4)/(PI*pow((p.ar*p.ar+x[i]*x[i]+y[j]*y[j]+z[k]*z[k]),3));
                     h.B0[0 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = tmp*2*(p.phi2*p.ar*y[j]-p.phi1*x[i]*z[k]);
@@ -218,7 +217,7 @@ int initState(struct varsHost_t h, struct parameters_t p, struct red_t *red)
             h.B0[2 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = p.ampl;
         }
 
-                // set the initial grid to undistorted
+                // Set the initial grid to undistorted.
                 h.xb[0 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = x[i];
                 h.xb[1 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = y[j];
                 h.xb[2 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] = z[k];
@@ -232,17 +231,14 @@ int initState(struct varsHost_t h, struct parameters_t p, struct red_t *red)
         REAL ellipseParam, circleParam, circleRadius;
         REAL ellipsePos[3], circlePos[3], tangent[3], normal[3];
         REAL len;
-        // array containing the weighting factors for the field smoothing
-        int *nCompute;
+        int *nCompute; // array containing the weighting factors for the field smoothing
 
-        // compute the step lengths such that no grid cell is left out
+        // Compute the step lengths such that no grid cell is left out.
         dEllipseParam = min(min(p.dx, p.dy), p.dz) / (p.major+p.width/2.) / p.stretch / 4.;
-//        dCircleParam = dEllipseParam/(p.width/2.);
         dCircleParam = min(min(p.dx, p.dy), p.dz)/(p.width/2.) / p.stretch / 4.;
-//        dCircleRadius = dCircleParam;
         dCircleRadius = min(min(p.dx, p.dy), p.dz) / 4.;
 
-        // initialize to 0
+        // Initialize the magnetic field to 0.
         memset(h.B0, 0, sizeof(h.B0));
 
         nCompute = (int *)malloc(p.nx*p.ny*p.nz*sizeof(*(nCompute)));
@@ -280,7 +276,7 @@ int initState(struct varsHost_t h, struct parameters_t p, struct red_t *red)
                 for (l = 0; l < 3; l++)
                     tangent[l] = tangent[l] / len;
 
-                //  Find vector which is orthonormal to tangent vector.
+                //  Find vector that is orthonormal to tangent vector.
                 if (abs(tangent[0]) <= 0.5) {
                     normal[0] = 0;
                     normal[1] = tangent[2];
@@ -297,18 +293,18 @@ int initState(struct varsHost_t h, struct parameters_t p, struct red_t *red)
                     normal[2] = 0;
                 }
 
-                // normalize the normal vector
+                // Normalize the normal vector.
                 len = sqrt(normal[0]*normal[0]+normal[1]*normal[1]+normal[2]*normal[2]);
                 for (l = 0; l < 3; l++)
                     normal[l] = normal[l] / len;
 
                 circleRadius = 0.;
 
-                // loop which changes the circle's radius
+                // Loop which changes the circle's radius.
                 while (circleRadius <= p.width/2.) {
                     circleParam = 0.;
 
-                    // loop which goes around the circle
+                    // Loop which goes around the circle.
                     while (circleParam <= 2.*PI) {
                         circlePos[0] = ellipsePos[0] + circleRadius *
                                 ((tangent[0]*tangent[0]*(1-cos(circleParam))+cos(circleParam))*normal[0] +
@@ -343,7 +339,7 @@ int initState(struct varsHost_t h, struct parameters_t p, struct red_t *red)
             }
         }
 
-        // add homogeneous magnetic field and do the averageing
+        // Add homogeneous magnetic field and do the averaging.
         for (k = 0; k < p.nz+2; k++)
             for (j = 0; j < p.ny+2; j++)
                 for (i = 0; i < p.nx+2; i++) {
@@ -354,16 +350,17 @@ int initState(struct varsHost_t h, struct parameters_t p, struct red_t *red)
                 }
     }
 
+
     //
     // velocity field uu
     //
 
-    // exclude the boundaries
+    // Exclude the boundaries.
     if (p.inertia == 1) {
         if (strncmp(p.uInit, "nil ", 4) == 0)
             memset(h.B0, 0, sizeof(h.B0));
 
-        // adapt for own initial velocity field:
+        // Adapt for own initial velocity field.
 //        for (k = 0; k < p.nz; k++) {
 //            z[k] = p.dz*k + p.Oz;
 //            for (j = 0; j < p.ny; j++) {
@@ -384,14 +381,14 @@ int initState(struct varsHost_t h, struct parameters_t p, struct red_t *red)
 }
 
 
-// Add a distortion to the initial grid xb. Note that B0 refers to the undistorted grid
-int initDistortion(REAL *xb, struct parameters_t p)
+// Add a distortion to the initial grid xb. Note that B0 refers to the undistorted grid.
+int initDistortion(REAL *xb, struct Parameters p)
 {
     int  i, j, k;
     REAL x[p.nx+2], y[p.ny+2], z[p.nz+2], yy;
 
     if (strncmp(p.initDist, "none ", 5) != 0) {
-        // include the boundaries
+        // Include the boundaries.
         for (k = 0; k < p.nz+2; k++) {
             z[k] = p.dz*(k-1) + p.Oz;
             for (j = 0; j < p.ny+2; j++) {
@@ -399,14 +396,14 @@ int initDistortion(REAL *xb, struct parameters_t p)
                 for (i = 0; i < p.nx+2; i++) {
                     x[i] = p.dx*(i-1) + p.Ox;
 
-                    // sinusoidal shear
+                    // Sinusoidal shear.
                     if (strncmp(p.initDist, "initShearX ", 11) == 0) {
                         xb[1 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] -= p.initShearA * sin(p.initShearK*2*PI*(x[i]+p.Ox-p.dx/2)/(p.Lx+p.dx)) * z[k];
                         yy = xb[1 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3];
                         xb[0 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] -= p.initShearB * sin(p.initShearK*2*PI*(yy+p.Oy-p.dy/2)/(p.Ly+p.dy)) * z[k];
                     }
 
-                    // sinusoidal shear, works best for boxes of -1 < xyz < 1
+                    // Sinusoidal shear, works best for boxes of -1 < xyz < 1.
                     if (strncmp(p.initDist, "centerShift ", 12) == 0) {
                         xb[1 + i*3 + j*(p.nx+2)*3 + k*(p.nx+2)*(p.ny+2)*3] +=
                             p.initShearA * exp(-p.initShearK*x[i]*x[i])*(1-y[j]*y[j])*(exp(-1*z[k]+1) - 5.0804508111226507);

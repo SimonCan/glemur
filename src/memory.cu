@@ -6,11 +6,11 @@
 #include "memory.h"
 #include "global.h"
 
-// allocate host and device memory
-int allocateMemory(struct varsHost_t *h, struct varsDev_t *d, struct parameters_t p, int gridSize[3]) {
-    cudaError_t         errCuda;          // error returned by device functions
+// Allocate host and device memory.
+int allocateMemory(struct VarsHost *h, struct VarsDev *d, struct Parameters p, int gridSize[3]) {
+    cudaError_t	errCuda;	// error returned by device functions
 
-    // allocate host memory
+    // Allocate host memory.
     h->B0 = (REAL *)malloc(3*(p.nx+2)*(p.ny+2)*(p.nz+2)*sizeof(*(h->B0)));
     if (h->B0 == NULL) { printf("error: could not allocate memory for B0\n"); return -1; }
     h->B = (REAL *)malloc(3*(p.nx+2)*(p.ny+2)*(p.nz+2)*sizeof(*(h->B)));
@@ -34,7 +34,7 @@ int allocateMemory(struct varsHost_t *h, struct varsDev_t *d, struct parameters_
         h->uu = (REAL *)malloc(3*p.nx*p.ny*p.nz*sizeof(*(h->uu)));
         if (h->uu == NULL) { printf("error: could not allocate memory for uu\n"); return -1; } }
 
-    // allocate global memory on GPU device
+    // Allocate global memory on GPU device.
     errCuda = cudaMalloc((void**)&(d->B0), 3*(p.nx+2)*(p.ny+2)*(p.nz+2)*sizeof(*(d->B0)));
     if (cudaSuccess != errCuda) { printf("error: could not allocate device memory for B0\n"); exit(EXIT_FAILURE); }
     errCuda = cudaMalloc((void**)&(d->B), 3*(p.nx+2)*(p.ny+2)*(p.nz+2)*sizeof(*(d->B)));
@@ -73,8 +73,8 @@ int allocateMemory(struct varsHost_t *h, struct varsDev_t *d, struct parameters_
 }
 
 
-// free host and device memory
-int freeMemory(struct varsHost_t *h, struct varsDev_t *d, struct parameters_t p) {
+// Free host and device memory.
+int freeMemory(struct VarsHost *h, struct VarsDev *d, struct Parameters p) {
     free(h->B0); free(h->B); free(h->JJ); free(h->xb); free(h->detJac);
     cudaFree(d->kk); cudaFree(d->xb_new); cudaFree(d->maxDelta); cudaFree(d->xb_tmp);
     cudaFree(d->detJac);

@@ -17,12 +17,12 @@
 
 subroutine readNamelist(p) bind(c, name='readnamelist')
 
-    use, intrinsic :: iso_c_binding, only:c_float, c_double, c_int, c_bool, c_char, C_NULL_CHAR
+    use, intrinsic :: iso_c_binding, only: c_float, c_double, c_int, c_bool, c_char, C_NULL_CHAR
     implicit none
 
-    ! NB: the order has to be the same as in the C declaration in global.h
-    type, bind(c) :: parameters_t
-        integer(kind=c_int)     :: nx, ny, nz
+    ! NB: the order has to be the same as in the C declaration in global.h.
+    type, bind(c) :: Parameters
+        integer(kind=c_int)   :: nx, ny, nz
         real(kind=CREAL)      :: Lx, Ly, Lz
         real(kind=CREAL)      :: Ox, Oy, Oz
         real(kind=CREAL)      :: dx, dy, dz
@@ -86,9 +86,9 @@ subroutine readNamelist(p) bind(c, name='readnamelist')
         logical(kind=c_bool)  :: redUMax
     end type
 
-    type(parameters_t), intent(inout) :: p
+    type(Parameters), intent(inout) :: p
 
-    ! these are used for reading the params.in file
+    ! These are used for reading the params.in file.
     integer(kind=c_int)   :: nx = 16, ny = 16, nz = 16
     real(kind=CREAL)      :: Lx = 8., Ly = 8., Lz = 20.
     real(kind=CREAL)      :: Ox = 0., Oy = 0., Oz = 0.
@@ -177,7 +177,7 @@ subroutine readNamelist(p) bind(c, name='readnamelist')
     read(unit=1, nml=io)
     close(unit=1)
 
-    ! copy values into struct (is there a more direct and cleaner method?)
+    ! Copy values into struct (is there a more direct and cleaner method?).
     p%nx = nx; p%ny = ny; p%nz = nz
 
     p%Lx = Lx;        p%Ly = Ly;        p%Lz = Lz
@@ -248,7 +248,7 @@ subroutine readNamelist(p) bind(c, name='readnamelist')
     p%redU2          = redU2
     p%redUMax        = redUMax
 
-!   convert initDist string into integer code. to be used on  the GPU
+!   Convert initDist string into integer code. to be used on  the GPU.
     if (initDist == 'initShearX') then
         p%initDistCode = 0
     endif

@@ -7,7 +7,7 @@
 #include "blobsDomes.h"
 
 // create the initial magnetic field B0 for one dome and blobs with variable twist k
-int initBlobsDome(struct varsHost_t h, struct parameters_t p)
+int initBlobsDome(struct VarsHost h, struct Parameters p)
 {
     int  i, j, k;
     REAL x[p.nx+2], y[p.ny+2], z[p.nz+2];
@@ -204,7 +204,7 @@ int initBlobsDome(struct varsHost_t h, struct parameters_t p)
 
 
 // create the initial magnetic field B0 for one dome and blobs with variable twist k for short box (-8 .. 8)
-int initBlobsDomeShort(struct varsHost_t h, struct parameters_t p)
+int initBlobsDomeShort(struct VarsHost h, struct Parameters p)
 {
     int  i, j, k;
     REAL x[p.nx+2], y[p.ny+2], z[p.nz+2];
@@ -388,7 +388,7 @@ int initBlobsDomeShort(struct varsHost_t h, struct parameters_t p)
 
 
 // create the initial magnetic field B0 for two domes and blobs
-int initBlobsDomes2(struct varsHost_t h, struct parameters_t p)
+int initBlobsDomes2(struct VarsHost h, struct Parameters p)
 {
     int  i, j, k;
     REAL x[p.nx+2], y[p.ny+2], z[p.nz+2];
