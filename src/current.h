@@ -19,6 +19,6 @@ __global__ void JStokesQuint(struct VarsDev d, int dimX, int dimY, int dimZ);
 __global__ void JStokesTri(struct VarsDev d, int dimX, int dimY, int dimZ);
 
 // Determine which routine should be used for the current calculation.
-void current(dim3 dimGrid, dim3 dimBlock, int blockSize[3], struct VarsDev d, struct Parameters p);
+void current(dim3 dimGrid, dim3 dimBlock, int blockSize[3], struct VarsDev d, struct Parameters params);
 
 #endif /* CURRENT_H_ */
