@@ -104,6 +104,7 @@ int main(int argc, char* argv[]) {
 
     // Read parameters from the input file.
     readnamelist (&params);
+    printf("jMethod = %s\n", params.jMethod);
 
     // Check if the finite difference method is valid.
     if ((strncmp(params.jMethod, "Classic ", 8) != 0)

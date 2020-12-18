@@ -157,9 +157,9 @@ __global__ void gradPClassic(struct VarsDev d, int dimX, int dimY, int dimZ)
 
 
 // Determine which routine should be used for the current calculation.
-void gradP(dim3 dimGrid, dim3 dimBlock, int blockSize[3], struct VarsDev d, struct Parameters p)
+void gradP(dim3 dimGrid, dim3 dimBlock, int blockSize[3], struct VarsDev d, struct Parameters params)
 {
-    if (strncmp(p.pMethod, "Classic ", 8) == 0)
+    if (strncmp(params.pMethod, "Classic ", 8) == 0)
         gradPClassic
             <<<dimGrid, dimBlock, (blockSize[0]+2)*(blockSize[1]+2)*(blockSize[2]+2)*3*sizeof(*(d.xb))>>>
             (d, blockSize[0]+2, blockSize[1]+2, blockSize[2]+2);

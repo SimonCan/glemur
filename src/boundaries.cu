@@ -489,40 +489,40 @@ __global__ void setPeriFace(REAL *field, int face)
 
 
 // Set 'field' to be periodic (host code).
-void setPeriHost(REAL *field, struct Parameters p)
+void setPeriHost(REAL *field, struct Parameters params)
 {
     int i, j, l;
 
-    if (p.zPeri) {
-        for (i = 0; i < p.nx+2; i++)
-            for (j = 0; j < p.ny+2; j++)
+    if (params.zPeri) {
+        for (i = 0; i < params.nx+2; i++)
+            for (j = 0; j < params.ny+2; j++)
                 for (l = 0; l < 3; l++) {
-                    field[l + i*3 + j*(p.nx+2)*3 + 0*(p.nx+2)*(p.ny+2)*3] =
-                    field[l + i*3 + j*(p.nx+2)*3 + (p.nz+0)*(p.nx+2)*(p.ny+2)*3];
-                    field[l + i*3 + j*(p.nx+2)*3 + (p.nz+1)*(p.nx+2)*(p.ny+2)*3] =
-                    field[l + i*3 + j*(p.nx+2)*3 + 1*(p.nx+2)*(p.ny+2)*3];
+                    field[l + i*3 + j*(params.nx+2)*3 + 0*(params.nx+2)*(params.ny+2)*3] =
+                    field[l + i*3 + j*(params.nx+2)*3 + (params.nz+0)*(params.nx+2)*(params.ny+2)*3];
+                    field[l + i*3 + j*(params.nx+2)*3 + (params.nz+1)*(params.nx+2)*(params.ny+2)*3] =
+                    field[l + i*3 + j*(params.nx+2)*3 + 1*(params.nx+2)*(params.ny+2)*3];
                 }
     }
 
-    if (p.yPeri) {
-        for (i = 0; i < p.nx+2; i++)
-            for (j = 0; j < p.nz+2; j++)
+    if (params.yPeri) {
+        for (i = 0; i < params.nx+2; i++)
+            for (j = 0; j < params.nz+2; j++)
                 for (l = 0; l < 3; l++) {
-                    field[l + i*3 + 0*(p.nx+2)*3 + j*(p.nx+2)*(p.ny+2)*3] =
-                    field[l + i*3 + (p.ny+0)*(p.nx+2)*3 + j*(p.nx+2)*(p.ny+2)*3];
-                    field[l + i*3 + (p.ny+1)*(p.nx+2)*3 + j*(p.nx+2)*(p.ny+2)*3] =
-                    field[l + i*3 + 1*(p.nx+2)*3 + j*(p.nx+2)*(p.ny+2)*3];
+                    field[l + i*3 + 0*(params.nx+2)*3 + j*(params.nx+2)*(params.ny+2)*3] =
+                    field[l + i*3 + (params.ny+0)*(params.nx+2)*3 + j*(params.nx+2)*(params.ny+2)*3];
+                    field[l + i*3 + (params.ny+1)*(params.nx+2)*3 + j*(params.nx+2)*(params.ny+2)*3] =
+                    field[l + i*3 + 1*(params.nx+2)*3 + j*(params.nx+2)*(params.ny+2)*3];
                 }
     }
 
-    if (p.xPeri) {
-        for (i = 0; i < p.ny+2; i++)
-            for (j = 0; j < p.nz+2; j++)
+    if (params.xPeri) {
+        for (i = 0; i < params.ny+2; i++)
+            for (j = 0; j < params.nz+2; j++)
                 for (l = 0; l < 3; l++) {
-                    field[l + 0*3 + i*(p.nx+2)*3 + j*(p.nx+2)*(p.ny+2)*3] =
-                    field[l + (p.nx+0)*3 + i*(p.nx+2)*3 + j*(p.nx+2)*(p.ny+2)*3];
-                    field[l + (p.nx+1)*3 + i*(p.nx+2)*3 + j*(p.nx+2)*(p.ny+2)*3] =
-                    field[l + 1*3 + i*(p.nx+2)*3 + j*(p.nx+2)*(p.ny+2)*3];
+                    field[l + 0*3 + i*(params.nx+2)*3 + j*(params.nx+2)*(params.ny+2)*3] =
+                    field[l + (params.nx+0)*3 + i*(params.nx+2)*3 + j*(params.nx+2)*(params.ny+2)*3];
+                    field[l + (params.nx+1)*3 + i*(params.nx+2)*3 + j*(params.nx+2)*(params.ny+2)*3] =
+                    field[l + 1*3 + i*(params.nx+2)*3 + j*(params.nx+2)*(params.ny+2)*3];
                 }
     }
 }
@@ -583,53 +583,53 @@ __global__ void setGridPeriFace(REAL *xb, int face)
 
 
 // Set the grid to be periodic (host code).
-void setGridPeriHost(REAL *xb, struct Parameters p)
+void setGridPeriHost(REAL *xb, struct Parameters params)
 {
     int i, j, l;
 
-    if (p.zPeri) {
-        for (i = 0; i < p.nx+2; i++)
-            for (j = 0; j < p.ny+2; j++)
+    if (params.zPeri) {
+        for (i = 0; i < params.nx+2; i++)
+            for (j = 0; j < params.ny+2; j++)
                 for (l = 0; l < 2; l++) {
-                    xb[l + i*3 + j*(p.nx+2)*3 + 0*(p.nx+2)*(p.ny+2)*3] =
-                    xb[l + i*3 + j*(p.nx+2)*3 + (p.nz+0)*(p.nx+2)*(p.ny+2)*3];
-                    xb[l + i*3 + j*(p.nx+2)*3 + (p.nz+1)*(p.nx+2)*(p.ny+2)*3] =
-                    xb[l + i*3 + j*(p.nx+2)*3 + 1*(p.nx+2)*(p.ny+2)*3];
+                    xb[l + i*3 + j*(params.nx+2)*3 + 0*(params.nx+2)*(params.ny+2)*3] =
+                    xb[l + i*3 + j*(params.nx+2)*3 + (params.nz+0)*(params.nx+2)*(params.ny+2)*3];
+                    xb[l + i*3 + j*(params.nx+2)*3 + (params.nz+1)*(params.nx+2)*(params.ny+2)*3] =
+                    xb[l + i*3 + j*(params.nx+2)*3 + 1*(params.nx+2)*(params.ny+2)*3];
                 }
-                xb[2 + i*3 + j*(p.nx+2)*3 + 0*(p.nx+2)*(p.ny+2)*3] =
-                xb[2 + i*3 + j*(p.nx+2)*3 + (p.nz+0)*(p.nx+2)*(p.ny+2)*3] - p.Lz - p.dz;
-                xb[2 + i*3 + j*(p.nx+2)*3 + (p.nz+1)*(p.nx+2)*(p.ny+2)*3] =
-                xb[2 + i*3 + j*(p.nx+2)*3 + 1*(p.nx+2)*(p.ny+2)*3] + p.Lz + p.dz;
+                xb[2 + i*3 + j*(params.nx+2)*3 + 0*(params.nx+2)*(params.ny+2)*3] =
+                xb[2 + i*3 + j*(params.nx+2)*3 + (params.nz+0)*(params.nx+2)*(params.ny+2)*3] - params.Lz - params.dz;
+                xb[2 + i*3 + j*(params.nx+2)*3 + (params.nz+1)*(params.nx+2)*(params.ny+2)*3] =
+                xb[2 + i*3 + j*(params.nx+2)*3 + 1*(params.nx+2)*(params.ny+2)*3] + params.Lz + params.dz;
     }
 
-    if (p.yPeri) {
-        for (i = 0; i < p.nx+2; i++)
-            for (j = 0; j < p.nz+2; j++)
+    if (params.yPeri) {
+        for (i = 0; i < params.nx+2; i++)
+            for (j = 0; j < params.nz+2; j++)
                 for (l = 0; l < 3; l += 2) {
-                    xb[l + i*3 + 0*(p.nx+2)*3 + j*(p.nx+2)*(p.ny+2)*3] =
-                    xb[l + i*3 + (p.ny+0)*(p.nx+2)*3 + j*(p.nx+2)*(p.ny+2)*3];
-                    xb[l + i*3 + (p.ny+1)*(p.nx+2)*3 + j*(p.nx+2)*(p.ny+2)*3] =
-                    xb[l + i*3 + 1*(p.nx+2)*3 + j*(p.nx+2)*(p.ny+2)*3];
+                    xb[l + i*3 + 0*(params.nx+2)*3 + j*(params.nx+2)*(params.ny+2)*3] =
+                    xb[l + i*3 + (params.ny+0)*(params.nx+2)*3 + j*(params.nx+2)*(params.ny+2)*3];
+                    xb[l + i*3 + (params.ny+1)*(params.nx+2)*3 + j*(params.nx+2)*(params.ny+2)*3] =
+                    xb[l + i*3 + 1*(params.nx+2)*3 + j*(params.nx+2)*(params.ny+2)*3];
                 }
-                xb[1 + i*3 + 0*(p.nx+2)*3 + j*(p.nx+2)*(p.ny+2)*3] =
-                xb[1 + i*3 + (p.ny+0)*(p.nx+2)*3 + j*(p.nx+2)*(p.ny+2)*3] - p.Ly - p.dy;
-                xb[1 + i*3 + (p.ny+1)*(p.nx+2)*3 + j*(p.nx+2)*(p.ny+2)*3] =
-                xb[1 + i*3 + 1*(p.nx+2)*3 + j*(p.nx+2)*(p.ny+2)*3] + p.Ly + p.dy;
+                xb[1 + i*3 + 0*(params.nx+2)*3 + j*(params.nx+2)*(params.ny+2)*3] =
+                xb[1 + i*3 + (params.ny+0)*(params.nx+2)*3 + j*(params.nx+2)*(params.ny+2)*3] - params.Ly - params.dy;
+                xb[1 + i*3 + (params.ny+1)*(params.nx+2)*3 + j*(params.nx+2)*(params.ny+2)*3] =
+                xb[1 + i*3 + 1*(params.nx+2)*3 + j*(params.nx+2)*(params.ny+2)*3] + params.Ly + params.dy;
     }
 
-    if (p.xPeri) {
-        for (i = 0; i < p.ny+2; i++)
-            for (j = 0; j < p.nz+2; j++)
+    if (params.xPeri) {
+        for (i = 0; i < params.ny+2; i++)
+            for (j = 0; j < params.nz+2; j++)
                 for (l = 1; l < 3; l++) {
-                    xb[l + 0*3 + i*(p.nx+2)*3 + j*(p.nx+2)*(p.ny+2)*3] =
-                    xb[l + (p.nx+0)*3 + i*(p.nx+2)*3 + j*(p.nx+2)*(p.ny+2)*3];
-                    xb[l + (p.nx+1)*3 + i*(p.nx+2)*3 + j*(p.nx+2)*(p.ny+2)*3] =
-                    xb[l + 1*3 + i*(p.nx+2)*3 + j*(p.nx+2)*(p.ny+2)*3];
+                    xb[l + 0*3 + i*(params.nx+2)*3 + j*(params.nx+2)*(params.ny+2)*3] =
+                    xb[l + (params.nx+0)*3 + i*(params.nx+2)*3 + j*(params.nx+2)*(params.ny+2)*3];
+                    xb[l + (params.nx+1)*3 + i*(params.nx+2)*3 + j*(params.nx+2)*(params.ny+2)*3] =
+                    xb[l + 1*3 + i*(params.nx+2)*3 + j*(params.nx+2)*(params.ny+2)*3];
                 }
-                xb[0 + 0*3 + i*(p.nx+2)*3 + j*(p.nx+2)*(p.ny+2)*3] =
-                xb[0 + (p.nx+0)*3 + i*(p.nx+2)*3 + j*(p.nx+2)*(p.ny+2)*3] - p.Lx - p.dx;
-                xb[0 + (p.nx+1)*3 + i*(p.nx+2)*3 + j*(p.nx+2)*(p.ny+2)*3] =
-                xb[0 + 1*3 + i*(p.nx+2)*3 + j*(p.nx+2)*(p.ny+2)*3] + p.Lx + p.dx;
+                xb[0 + 0*3 + i*(params.nx+2)*3 + j*(params.nx+2)*(params.ny+2)*3] =
+                xb[0 + (params.nx+0)*3 + i*(params.nx+2)*3 + j*(params.nx+2)*(params.ny+2)*3] - params.Lx - params.dx;
+                xb[0 + (params.nx+1)*3 + i*(params.nx+2)*3 + j*(params.nx+2)*(params.ny+2)*3] =
+                xb[0 + 1*3 + i*(params.nx+2)*3 + j*(params.nx+2)*(params.ny+2)*3] + params.Lx + params.dx;
     }
 }
 
@@ -642,19 +642,19 @@ void setBbound(dim3 dimGrid2dXY, dim3 dimGrid2dXZ, dim3 dimGrid2dYZ, dim3 dimBlo
 }
 
 
-void setPeri(dim3 dimGrid2dPlusXY, dim3 dimGrid2dPlusXZ, dim3 dimGrid2dPlusYZ, dim3 dimBlock2d, REAL *dev_field, struct Parameters p)
+void setPeri(dim3 dimGrid2dPlusXY, dim3 dimGrid2dPlusXZ, dim3 dimGrid2dPlusYZ, dim3 dimBlock2d, REAL *dev_field, struct Parameters params)
 {
-    if (p.zPeri) setPeriFace<<<dimGrid2dPlusXY, dimBlock2d>>>(dev_field, 2);
-    if (p.yPeri) setPeriFace<<<dimGrid2dPlusXZ, dimBlock2d>>>(dev_field, 1);
-    if (p.xPeri) setPeriFace<<<dimGrid2dPlusYZ, dimBlock2d>>>(dev_field, 0);
+    if (params.zPeri) setPeriFace<<<dimGrid2dPlusXY, dimBlock2d>>>(dev_field, 2);
+    if (params.yPeri) setPeriFace<<<dimGrid2dPlusXZ, dimBlock2d>>>(dev_field, 1);
+    if (params.xPeri) setPeriFace<<<dimGrid2dPlusYZ, dimBlock2d>>>(dev_field, 0);
 }
 
 
-void setGridPeri(dim3 dimGrid2dPlusXY, dim3 dimGrid2dPlusXZ, dim3 dimGrid2dPlusYZ, dim3 dimBlock2d, REAL *dev_xb, struct Parameters p)
+void setGridPeri(dim3 dimGrid2dPlusXY, dim3 dimGrid2dPlusXZ, dim3 dimGrid2dPlusYZ, dim3 dimBlock2d, REAL *dev_xb, struct Parameters params)
 {
-    if (p.zPeri) setGridPeriFace<<<dimGrid2dPlusXY, dimBlock2d>>>(dev_xb, 2);
-    if (p.yPeri) setGridPeriFace<<<dimGrid2dPlusXZ, dimBlock2d>>>(dev_xb, 1);
-    if (p.xPeri) setGridPeriFace<<<dimGrid2dPlusYZ, dimBlock2d>>>(dev_xb, 0);
+    if (params.zPeri) setGridPeriFace<<<dimGrid2dPlusXY, dimBlock2d>>>(dev_xb, 2);
+    if (params.yPeri) setGridPeriFace<<<dimGrid2dPlusXZ, dimBlock2d>>>(dev_xb, 1);
+    if (params.xPeri) setGridPeriFace<<<dimGrid2dPlusYZ, dimBlock2d>>>(dev_xb, 0);
 }
 
 

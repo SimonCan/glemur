@@ -1682,30 +1682,30 @@ __global__ void JStokesTri(struct VarsDev d, int dimX, int dimY, int dimZ)
 
 
 // Compute the electric current density.
-void current(dim3 dimGrid, dim3 dimBlock, int blockSize[3], struct VarsDev d, struct Parameters p)
+void current(dim3 dimGrid, dim3 dimBlock, int blockSize[3], struct VarsDev d, struct Parameters params)
 {
     // Determine which routine should be used for the current calculation.
-    if (strncmp(p.jMethod, "Stokes ", 7) == 0)
+    if (strncmp(params.jMethod, "Stokes ", 7) == 0)
         JStokes
             <<<dimGrid, dimBlock, (3*(blockSize[0]+2)*(blockSize[1]+2)*(blockSize[2]+2)*2 +
                                    3*blockSize[0]*blockSize[1]*blockSize[2])*sizeof(*(d.xb))>>>
             (d, blockSize[0]+2, blockSize[1]+2, blockSize[2]+2);
-    if (strncmp(p.jMethod, "Stokes4th ", 10) == 0)
+    if (strncmp(params.jMethod, "Stokes4th ", 10) == 0)
         JStokes4th
             <<<dimGrid, dimBlock, (3*(blockSize[0]+2)*(blockSize[1]+2)*(blockSize[2]+2)*2 +
                                    3*blockSize[0]*blockSize[1]*blockSize[2])*sizeof(*(d.xb))>>>
             (d, blockSize[0]+2, blockSize[1]+2, blockSize[2]+2);
-    if (strncmp(p.jMethod, "StokesQuint ", 12) == 0)
+    if (strncmp(params.jMethod, "StokesQuint ", 12) == 0)
         JStokesQuint
             <<<dimGrid, dimBlock, (3*(blockSize[0]+2)*(blockSize[1]+2)*(blockSize[2]+2)*2 +
                                    3*blockSize[0]*blockSize[1]*blockSize[2])*sizeof(*(d.xb))>>>
             (d, blockSize[0]+2, blockSize[1]+2, blockSize[2]+2);
-    if (strncmp(p.jMethod, "StokesTri ", 10) == 0)
+    if (strncmp(params.jMethod, "StokesTri ", 10) == 0)
         JStokesTri
             <<<dimGrid, dimBlock, (3*(blockSize[0]+2)*(blockSize[1]+2)*(blockSize[2]+2)*2 +
                                    3*blockSize[0]*blockSize[1]*blockSize[2])*sizeof(*(d.xb))>>>
             (d, blockSize[0]+2, blockSize[1]+2, blockSize[2]+2);
-    if (strncmp(p.jMethod, "Classic ", 8) == 0)
+    if (strncmp(params.jMethod, "Classic ", 8) == 0)
         JClassic
             <<<dimGrid, dimBlock, (blockSize[0]+2)*(blockSize[1]+2)*(blockSize[2]+2)*(3*2+1)*sizeof(*(d.xb))>>>
             (d, blockSize[0]+2, blockSize[1]+2, blockSize[2]+2);
