@@ -27,8 +27,8 @@ subroutine readNamelist(p) bind(c, name='readnamelist')
         real(kind=CREAL)      :: Ox, Oy, Oz
         real(kind=CREAL)      :: dx, dy, dz
         real(kind=CREAL)      :: dx1, dy1, dz1
-        character(kind=c_char, len=30) :: bInit
-        character(kind=c_char, len=30) :: uInit
+        character(kind=c_char, len=1) :: bInit(30)
+        character(kind=c_char, len=1) :: uInit(30)
         real(kind=CREAL)      :: ampl
         real(kind=CREAL)      :: phi1, phi2
         real(kind=CREAL)      :: L1, L2
@@ -39,7 +39,7 @@ subroutine readNamelist(p) bind(c, name='readnamelist')
         real(kind=CREAL)      :: stretch
         real(kind=CREAL)      :: bGround
         real(kind=CREAL), dimension(10) :: blobXc, blobYc, blobZc, blobZl, blobTwist, blobScale
-        character(kind=c_char, len=30) ::  initDist
+        character(kind=c_char, len=1) ::  initDist(30)
         integer(kind=c_int)   :: initDistCode
         real(kind=CREAL)      :: initShearA
         real(kind=CREAL)      :: initShearB
@@ -62,8 +62,8 @@ subroutine readNamelist(p) bind(c, name='readnamelist')
         logical(kind=c_bool)  :: yPeri
         logical(kind=c_bool)  :: zPeri
         logical(kind=c_bool)  :: epsilonProf
-        character(kind=c_char, len=30) :: jMethod
-        character(kind=c_char, len=30) :: pMethod
+        character(kind=c_char, len=1) :: jMethod(30)
+        character(kind=c_char, len=1) :: pMethod(30)
         integer(kind=c_int)   :: nTs
         real(kind=CREAL)      :: dtDump
         real(kind=CREAL)      :: dtSave
@@ -92,8 +92,8 @@ subroutine readNamelist(p) bind(c, name='readnamelist')
     integer(kind=c_int)   :: nx = 16, ny = 16, nz = 16
     real(kind=CREAL)      :: Lx = 8., Ly = 8., Lz = 20.
     real(kind=CREAL)      :: Ox = 0., Oy = 0., Oz = 0.
-    character(kind=c_char, len=30) :: bInit = "Pontin09"
-    character(kind=c_char, len=30) :: uInit = "nil"
+    character(len=30)     :: bInit = "Pontin09"
+    character(len=30)     :: uInit = "nil"
     real(kind=CREAL)      :: ampl = 1.
     real(kind=CREAL)      :: phi1 = 2., phi2 = -2.
     real(kind=CREAL)      :: L1 = -4., L2 = 4.
@@ -104,7 +104,7 @@ subroutine readNamelist(p) bind(c, name='readnamelist')
     real(kind=CREAL)      :: stretch = 1.0
     real(kind=CREAL)      :: bGround = 0.
     real(kind=CREAL), dimension(10) :: blobXc, blobYc, blobZc, blobZl, blobTwist, blobScale ! warning: no default values
-    character(kind=c_char, len=30) ::  initDist = "none"
+    character(len=30)     :: initDist = "none"
     real(kind=CREAL)      :: initShearA = 0.
     real(kind=CREAL)      :: initShearB = 0.
     real(kind=CREAL)      :: initShearK = 1.
@@ -126,8 +126,8 @@ subroutine readNamelist(p) bind(c, name='readnamelist')
     logical(kind=c_bool)  :: yPeri = .False.
     logical(kind=c_bool)  :: zPeri = .False.
     logical(kind=c_bool)  :: epsilonProf = .True.
-    character(kind=c_char, len=30) :: jMethod = "Stokes"
-    character(kind=c_char, len=30) :: pMethod = "Classic"
+    character(len=30)     :: jMethod = "Stokes"
+    character(len=30)     :: pMethod = "Classic"
     integer(kind=c_int)   :: nTs = 10
     real(kind=CREAL)      :: dtDump = 10.
     real(kind=CREAL)      :: dtSave = 1.
@@ -184,8 +184,10 @@ subroutine readNamelist(p) bind(c, name='readnamelist')
     p%Ox = Ox;        p%Oy = Oy;        p%Oz = Oz
     p%dx = Lx/(nx-1); p%dy = Ly/(ny-1); p%dz = Lz/(nz-1);  ! without boundary layer
     p%dx1 = 1/p%dx;   p%dy1 = 1/p%dy;   p%dz1 = 1/p%dz
-    p%bInit    = bInit//C_NULL_CHAR
-    p%uInit    = uInit//C_NULL_CHAR
+    call copyString(bInit, p%bInit)
+    call copyString(uInit, p%uInit)
+!    p%bInit    = bInit//C_NULL_CHAR
+!    p%uInit    = uInit//C_NULL_CHAR
     p%ampl     = ampl
     p%phi1     = phi1
     p%phi2     = phi2
@@ -201,7 +203,8 @@ subroutine readNamelist(p) bind(c, name='readnamelist')
     p%major    = major
     p%stretch  = stretch
     p%bGround  = bGround
-    p%initDist = initDist//C_NULL_CHAR
+    call copyString(initDist, p%initDist)
+!    p%initDist = initDist//C_NULL_CHAR
     p%initShearA = initShearA
     p%initShearB = initShearB
     p%initShearK = initShearK
@@ -224,8 +227,10 @@ subroutine readNamelist(p) bind(c, name='readnamelist')
     p%yPeri         = yPeri
     p%zPeri         = zPeri
     p%epsilonProf   = epsilonProf
-    p%jMethod       = jMethod//C_NULL_CHAR
-    p%pMethod       = pMethod//C_NULL_CHAR
+    call copyString(jMethod, p%jMethod)
+    call copyString(pMethod, p%pMethod)
+!    p%jMethod       = jMethod//C_NULL_CHAR
+!    p%pMethod       = pMethod//C_NULL_CHAR
 
     p%nTs            = nTs
     p%dtDump         = dtDump
@@ -257,3 +262,21 @@ subroutine readNamelist(p) bind(c, name='readnamelist')
     endif
 
 end subroutine readNamelist
+
+
+subroutine copyString(stringSource, stringTarget)
+      use, intrinsic :: iso_c_binding, only : c_float, c_int, c_char, c_null_char
+      implicit none
+
+      character(len=30) :: stringSource
+      character(kind=c_char, len=1), dimension(30), intent(inout) :: stringTarget
+      integer :: i
+
+      do i=1,30
+          if (stringSource(i:i) == c_null_char) then
+               exit
+          else
+              stringTarget(i:i) = stringSource(i:i)
+          end if
+      end do
+end subroutine copyString
