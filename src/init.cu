@@ -208,17 +208,17 @@ int initState(struct VarsHost h, struct Parameters params, struct Reduction *red
                     h.B0[2 + i*3 + j*(params.nx+2)*3 + k*(params.nx+2)*(params.ny+2)*3] += params.bGround;
                 }
 
-        // Discontinuous field in z-direction with kink into x.
-        if (strncmp(params.bInit, "discont ", 8) == 0) {
-            if (z[k] > params.az) {
-                h.B0[0 + i*3 + j*(params.nx+2)*3 + k*(params.nx+2)*(params.ny+2)*3] = params.pert;
-            }
-            else {
-                h.B0[0 + i*3 + j*(params.nx+2)*3 + k*(params.nx+2)*(params.ny+2)*3] = 0;
-            }
-            h.B0[1 + i*3 + j*(params.nx+2)*3 + k*(params.nx+2)*(params.ny+2)*3] = 0;
-            h.B0[2 + i*3 + j*(params.nx+2)*3 + k*(params.nx+2)*(params.ny+2)*3] = params.ampl;
-        }
+                // Discontinuous field in z-direction with kink into x.
+                if (strncmp(params.bInit, "discont ", 8) == 0) {
+                    if (z[k] > params.az) {
+                        h.B0[0 + i*3 + j*(params.nx+2)*3 + k*(params.nx+2)*(params.ny+2)*3] = params.pert;
+                    }
+                    else {
+                        h.B0[0 + i*3 + j*(params.nx+2)*3 + k*(params.nx+2)*(params.ny+2)*3] = 0;
+                    }
+                    h.B0[1 + i*3 + j*(params.nx+2)*3 + k*(params.nx+2)*(params.ny+2)*3] = 0;
+                    h.B0[2 + i*3 + j*(params.nx+2)*3 + k*(params.nx+2)*(params.ny+2)*3] = params.ampl;
+                }
 
                 // Set the initial grid to undistorted.
                 h.xb[0 + i*3 + j*(params.nx+2)*3 + k*(params.nx+2)*(params.ny+2)*3] = x[i];
