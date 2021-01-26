@@ -8,11 +8,12 @@ OBJ_CU = $(OBJ_CU_MAIN) blobsDomes.o readExternal.o
 VPATH = initialConditions
 OBJ = $(OBJ_CU) readNamelist.o $(TMP)
 SRC = main.cu
-PRECISION = 32
+PRECISION = 64
 #DEBUG = -G -g
 DEBUG = 
 LIB_PATH = $(DYLD_LIBRARY)
-OPT = -rdc=true -m64 -arch sm_30 -L$(LIB_PATH) -lcuda -lcudart -dc -lm -IinitialConditions
+#OPT = -rdc=true -m64 -arch sm_30 -L$(LIB_PATH) -lcuda -lcudart -dc -lm -IinitialConditions
+OPT = -rdc=true -m64 --gpu-architecture=sm_50 -L$(LIB_PATH) -lcuda -lcudart -dc -lm -IinitialConditions
 
 all: $(EXEC)
 
@@ -21,7 +22,7 @@ $(EXEC): $(OBJ)
 	rm $(TMP)
 
 tmp.o: $(OBJ_CU)
-	$(NVCC) -o $(TMP) $(OBJ_CU) -rdc=true -arch sm_30 -dlink -L$(LIB_PATH) -lcuda -lcudart -lstdc++
+	$(NVCC) -o $(TMP) $(OBJ_CU) -rdc=true --gpu-architecture=sm_50 -dlink -L$(LIB_PATH) -lcuda -lcudart -lstdc++
 
 readNamelist.o: readNamelist.f90
 	$(FC) -cpp -DPRECISION=$(PRECISION) -c readNamelist.f90
