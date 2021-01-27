@@ -9,7 +9,7 @@ int                 parsedCom;        // used for parsing command line parameter
 long int            activeDevice;     // number of the CUDA device to be used
 
 int                 timeIndex;        // time step index
-struct Parameters   params;           // contains the user specified parameters
+Parameters          params;           // contains the user specified parameters
 struct Reduction    red;              // contains all the reduced values
 REAL                t, dt;            // time and delta time
 

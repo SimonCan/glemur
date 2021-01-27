@@ -31,7 +31,7 @@ extern "C" {
 extern void readnamelist(struct Parameters *params);
 }
 
-__constant__ struct Parameters dev_params; // simulation parameters on the device
+__device__ __constant__ Parameters dev_params; // simulation parameters on the device
 __constant__ REAL   a_i[6];                // coefficients a_i for the adaptive step size Runge-Kutta
 __constant__ REAL   b_ij[7*6];             // coefficients b_ij for the adaptive step size Runge-Kutta
 __constant__ REAL   c_i[6];                // coefficients c_i for the adaptive step size Runge-Kutta
@@ -115,7 +115,6 @@ int main(int argc, char* argv[]) {
         printf("error: invalid method for computing J: %s\n", params.jMethod);
         return -1;
     } else
-        printf("method for J: %s\n", params.jMethod);
 
     printf("initial B: %s\n", params.bInit);
     if (params.inertia == true)
@@ -227,7 +226,7 @@ int main(int argc, char* argv[]) {
     // Copy the simulation parameters into constant memory.
     errCuda = cudaMemcpyToSymbol(dev_params, &params, sizeof(struct Parameters));
     if (cudaSuccess != errCuda) {
-        printf("error: could not copy 'params' to the device\n");
+        printf("error: could not copy 'params' to the device. error code = %i\n", errCuda);
         exit (EXIT_FAILURE);
     }
     cudaDeviceSynchronize();
