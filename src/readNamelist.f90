@@ -92,8 +92,8 @@ subroutine readNamelist(p) bind(c, name='readnamelist')
     integer(kind=c_int)   :: nx = 16, ny = 16, nz = 16
     real(kind=CREAL)      :: Lx = 8., Ly = 8., Lz = 20.
     real(kind=CREAL)      :: Ox = 0., Oy = 0., Oz = 0.
-    character(len=30)     :: bInit = "Pontin09"
-    character(len=30)     :: uInit = "nil"
+    character(kind=c_char, len=30)     :: bInit = "Pontin09"
+    character(kind=c_char, len=30)     :: uInit = "nil"
     real(kind=CREAL)      :: ampl = 1.
     real(kind=CREAL)      :: phi1 = 2., phi2 = -2.
     real(kind=CREAL)      :: L1 = -4., L2 = 4.
@@ -104,7 +104,7 @@ subroutine readNamelist(p) bind(c, name='readnamelist')
     real(kind=CREAL)      :: stretch = 1.0
     real(kind=CREAL)      :: bGround = 0.
     real(kind=CREAL), dimension(10) :: blobXc, blobYc, blobZc, blobZl, blobTwist, blobScale ! warning: no default values
-    character(len=30)     :: initDist = "none"
+    character(kind=c_char, len=30)     :: initDist = "none"
     real(kind=CREAL)      :: initShearA = 0.
     real(kind=CREAL)      :: initShearB = 0.
     real(kind=CREAL)      :: initShearK = 1.
@@ -126,8 +126,8 @@ subroutine readNamelist(p) bind(c, name='readnamelist')
     logical(kind=c_bool)  :: yPeri = .False.
     logical(kind=c_bool)  :: zPeri = .False.
     logical(kind=c_bool)  :: epsilonProf = .True.
-    character(len=30)     :: jMethod = "Stokes"
-    character(len=30)     :: pMethod = "Classic"
+    character(kind=c_char, len=30)     :: jMethod = "Stokes"
+    character(kind=c_char, len=30)     :: pMethod = "Classic"
     integer(kind=c_int)   :: nTs = 10
     real(kind=CREAL)      :: dtDump = 10.
     real(kind=CREAL)      :: dtSave = 1.
@@ -279,4 +279,5 @@ subroutine copyString(stringSource, stringTarget)
               stringTarget(i:i) = stringSource(i:i)
           end if
       end do
+      stringTarget(30) = c_null_char
 end subroutine copyString
