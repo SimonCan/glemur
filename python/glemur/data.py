@@ -5,7 +5,7 @@
 
 import numpy as np
 import pyvtk as vtk
-from vtk import vtkStructuredPointsReader
+from vtk import vtkStructuredPointsReader, vtkStructuredGridReader
 from vtk.util import numpy_support as VN
 
 
@@ -31,7 +31,7 @@ class readB0:
             Name of the file storing B(X,0) = B0.
         """
         
-        reader = vtk.vtkStructuredPointsReader()
+        reader = vtkStructuredPointsReader()
 
         if (dataDir[-1] == '/'):
             dataDir = dataDir[:-1]
@@ -92,7 +92,7 @@ class readDump:
             Name of the dump file.
         """
         
-        reader = vtk.vtkStructuredGridReader()
+        reader = vtkStructuredGridReader()
         
         if (dataDir[-1] == '/'):
             dataDir = dataDir[:-1]
@@ -162,7 +162,7 @@ class readParams:
             Name of the dump file.
         """
         
-        reader = vtk.vtkStructuredGridReader()
+        reader = vtkStructuredGridReader()
         
         if (dataDir[-1] == '/'):
             dataDir = dataDir[:-1]
